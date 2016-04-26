@@ -1,0 +1,2 @@
+rm -rf ../os/config
+php ../os/osek/generator/generator.php --cmdline -l -v -c ../os/etc/config.oil -f ../os/osek/gen/inc/Os_Internal_Cfg.h.php  ../os/osek/gen/inc/Os_Cfg.h.php  ../os/osek/gen/src/Os_Cfg.c.php ../os/osek/gen/src/Os_Internal_Cfg.c.php  ../os/osek/gen/src/cortexM4/Os_Internal_Arch_Cfg.c.php ../os/osek/gen/inc/cortexM4/Os_Internal_Arch_Cfg.h.php -o ../os/config

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<EmBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="..\bsp\STM32F4\driver\uart_debug.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4808" topLine="127" />
+		</Cursor>
+	</File>
+	<File name="..\bsp\STM32F4\ld\stm32f407vg_flash.ld" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3589" topLine="69" />
+		</Cursor>
+	</File>
+	<File name="..\bsp\STM32F4\startup\startup_stm32f4xx.S" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8833" topLine="121" />
+		</Cursor>
+	</File>
+	<File name="..\os\config\src\Os_Cfg.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="706" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\os\config\src\Os_Internal_Cfg.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="569" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\os\config\src\cortexM4\Os_Internal_Arch_Cfg.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5342" topLine="113" />
+		</Cursor>
+	</File>
+	<File name="..\os\etc\config.oil" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="918" topLine="22" />
+		</Cursor>
+	</File>
+	<File name="..\os\osek\inc\Os_Internal.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2976" topLine="86" />
+		</Cursor>
+	</File>
+	<File name="..\os\osek\inc\cortexM4\lpc43xx\Os_Internal_Arch_Cpu.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1938" topLine="34" />
+		</Cursor>
+	</File>
+	<File name="..\os\osek\src\Os_Internal.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6606" topLine="194" />
+		</Cursor>
+	</File>
+	<File name="..\os\osek\src\cortexM4\Os_Internal_Arch.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4601" topLine="124" />
+		</Cursor>
+	</File>
+	<File name="..\os\osek\src\cortexM4\PendSV.s" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2356" topLine="39" />
+		</Cursor>
+	</File>
+	<File name="..\src\main.c" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="455" topLine="63" />
+		</Cursor>
+	</File>
+</EmBlocks_layout_file>
