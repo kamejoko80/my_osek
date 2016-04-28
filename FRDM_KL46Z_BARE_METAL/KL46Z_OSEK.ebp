@@ -81,7 +81,6 @@
 		<Unit filename="inc\MKL46Z4.h" />
 		<Unit filename="inc\system_MKL46Z4.h" />
 		<Unit filename="MKL46Z4.ld" />
-		<Unit filename="readme.txt" />
 		<Unit filename="src\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -94,6 +93,11 @@
 		<Extensions>
 			<code_completion />
 			<debugger>
+				<target_debugging_settings target="Release" active_interface="OpenOCD">
+					<debug_interface interface_id="OpenOCD" ip_address="" ip_port="" path="" executable="" description="" dont_start_server="false" backoff_time="" options="0" reg_filter="0" active_family="All">
+						<family_options family_id="All" />
+					</debug_interface>
+				</target_debugging_settings>
 				<target_debugging_settings target="Debug" active_interface="J-link">
 					<debug_interface interface_id="Generic" ip_address="" ip_port="" path="" executable="" description="" dont_start_server="false" backoff_time="" options="0" reg_filter="0" active_family="" />
 					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="%Software\SEGGER\J-Link:InstallPath%" executable="JLinkGDBServer.exe" description="" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="Generic">
@@ -117,11 +121,6 @@
 							<option opt_id="ID_ADD_COMMANDS" opt_value="" />
 							<option opt_id="ID_ADD_CMNDS" opt_value="-f kinetis.cfg" />
 						</family_options>
-					</debug_interface>
-				</target_debugging_settings>
-				<target_debugging_settings target="Release" active_interface="OpenOCD">
-					<debug_interface interface_id="OpenOCD" ip_address="" ip_port="" path="" executable="" description="" dont_start_server="false" backoff_time="" options="0" reg_filter="0" active_family="All">
-						<family_options family_id="All" />
 					</debug_interface>
 				</target_debugging_settings>
 			</debugger>
