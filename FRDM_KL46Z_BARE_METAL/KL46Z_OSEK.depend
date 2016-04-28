@@ -1,0 +1,96 @@
+# depslib dependency file v1.0
+1461739266 source:d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\src\startup_stm32l0xx.s
+
+1461665930 source:d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\src\system_stm32l0xx.c
+	"stm32l0xx.h"
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\inc\stm32l0xx.h
+	"core_cm0plus.h"
+	"system_stm32l0xx.h"
+	<stdint.h>
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\cmsis\core_cm0plus.h
+	<stdint.h>
+	<core_cmInstr.h>
+	<core_cmFunc.h>
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\cmsis\core_cminstr.h
+	<cmsis_iar.h>
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\cmsis\core_cmfunc.h
+	<cmsis_iar.h>
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\inc\system_stm32l0xx.h
+
+1419229775 source:d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\src\system_mkl46z4.c
+	<stdint.h>
+	"MKL46Z4.h"
+
+1371524296 d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\inc\mkl46z4.h
+	"core_cm0plus.h"
+	"system_MKL46Z4.h"
+
+1371524296 d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\inc\system_mkl46z4.h
+	<stdint.h>
+
+1461744497 source:d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\src\main.c
+	"MKL46Z4.h"
+
+1461743437 source:d:\workspace\emblocks\osek\frdm_kl46z_osek\kl46z_osek\src\startup_mkl46z4.s
+
+1461743437 source:d:\workspace\emblocks\osek\frdm_kl46z_osek_v1.0\src\startup_mkl46z4.s
+
+1419229775 source:d:\workspace\emblocks\osek\frdm_kl46z_osek_v1.0\src\system_mkl46z4.c
+	<stdint.h>
+	"MKL46Z4.h"
+
+1371524296 d:\workspace\emblocks\osek\frdm_kl46z_osek_v1.0\inc\mkl46z4.h
+	"core_cm0plus.h"
+	"system_MKL46Z4.h"
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_osek_v1.0\cmsis\core_cm0plus.h
+	<stdint.h>
+	<core_cmInstr.h>
+	<core_cmFunc.h>
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_osek_v1.0\cmsis\core_cminstr.h
+	<cmsis_iar.h>
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_osek_v1.0\cmsis\core_cmfunc.h
+	<cmsis_iar.h>
+
+1371524296 d:\workspace\emblocks\osek\frdm_kl46z_osek_v1.0\inc\system_mkl46z4.h
+	<stdint.h>
+
+1461824260 source:d:\workspace\emblocks\osek\frdm_kl46z_osek_v1.0\src\main.c
+	<stdio.h>
+	"MKL46Z4.h"
+
+1461743437 source:d:\workspace\emblocks\osek\frdm_kl46z_bare_metal_v1.0\src\startup_mkl46z4.s
+
+1419229775 source:d:\workspace\emblocks\osek\frdm_kl46z_bare_metal_v1.0\src\system_mkl46z4.c
+	<stdint.h>
+	"MKL46Z4.h"
+
+1371524296 d:\workspace\emblocks\osek\frdm_kl46z_bare_metal_v1.0\inc\mkl46z4.h
+	"core_cm0plus.h"
+	"system_MKL46Z4.h"
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_bare_metal_v1.0\cmsis\core_cm0plus.h
+	<stdint.h>
+	<core_cmInstr.h>
+	<core_cmFunc.h>
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_bare_metal_v1.0\cmsis\core_cminstr.h
+	<cmsis_iar.h>
+
+1461665930 d:\workspace\emblocks\osek\frdm_kl46z_bare_metal_v1.0\cmsis\core_cmfunc.h
+	<cmsis_iar.h>
+
+1371524296 d:\workspace\emblocks\osek\frdm_kl46z_bare_metal_v1.0\inc\system_mkl46z4.h
+	<stdint.h>
+
+1461824260 source:d:\workspace\emblocks\osek\frdm_kl46z_bare_metal_v1.0\src\main.c
+	<stdio.h>
+	"MKL46Z4.h"
+
