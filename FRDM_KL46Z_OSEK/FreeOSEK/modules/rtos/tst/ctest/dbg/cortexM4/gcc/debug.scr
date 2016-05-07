@@ -1,0 +1,13 @@
+target remote localhost:3333
+load
+set $pc = ResetISR+1
+set $msp = &_vStackTop
+break ConfTestFinish
+continue
+dump value out/rtos/TestResults.bin TestResults
+dump value out/rtos/TestResultsOk.bin TestResultsOk
+dump value out/rtos/SequenceCounter.bin SequenceCounter
+dump value out/rtos/SequenceCounterOk.bin SequenceCounterOk
+dump value out/rtos/ConfTestResult.bin ConfTestResult
+kill
+quit

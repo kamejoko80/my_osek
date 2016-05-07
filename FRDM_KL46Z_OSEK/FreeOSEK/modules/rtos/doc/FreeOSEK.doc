@@ -1,0 +1,733 @@
+/* Copyright 2008, 2009, Mariano Cerdeiro
+ *
+ * This file is part of FreeOSEK.
+ *
+ * FreeOSEK is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Linking FreeOSEK statically or dynamically with other modules is making a
+ * combined work based on FreeOSEK. Thus, the terms and conditions of the GNU
+ * General Public License cover the whole combination.
+ *
+ * In addition, as a special exception, the copyright holders of FreeOSEK give
+ * you permission to combine FreeOSEK program with free software programs or
+ * libraries that are released under the GNU LGPL and with independent modules
+ * that communicate with FreeOSEK solely through the FreeOSEK defined interface.
+ * You may copy and distribute such a system following the terms of the GNU GPL
+ * for FreeOSEK and the licenses of the other code concerned, provided that you
+ * include the source code of that other code when and as the GNU GPL requires
+ * distribution of source code.
+ *
+ * Note that people who make modified versions of FreeOSEK are not obligated to
+ * grant this special exception for their modified versions; it is their choice
+ * whether to do so. The GNU General Public License gives permission to release
+ * a modified version without this exception; this exception also makes it
+ * possible to release a modified version which carries forward this exception.
+ *
+ * FreeOSEK is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with FreeOSEK. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/** \page FreeOSEK FreeOSEK OS Manual
+ *
+ * This is the FreeOSEK manual, here  you will find all information related to
+ * the FreeOSEK RTOS. FreeOSEK is based on the OSEK-VDX RTOS specifications.
+ * You may want to take a look on the specification too. You can get the
+ * OSEK-VDX RTOS specification from the OSEK-VDX page
+ * <a href="http://www.osek-vdx.org/">http://www.osek-vdx.org/</a>.
+ *
+ * \subpage FreeOSEK_RE
+ *
+ * \section FreeOSEK_TOC Table of content
+ *
+ * - \ref FreeOSEK_Introduction <br>
+ * 	- \ref FreeOSEK_Introduction_RunLevels <br>
+ * 	- \ref FreeOSEK_Introduction_ISR <br>
+ * 	- \ref FreeOSEK_Introduction_Task <br>
+ * 	- \ref FreeOSEK_Introduction_Task_Priority <br>
+ * 	- \ref FreeOSEK_Introduction_Scheduling <br>
+ * 	- \ref FreeOSEK_Introduction_Scheduling_Preemtive <br>
+ * 	- \ref FreeOSEK_Introduction_Scheduling_Nonpreemtive <br>
+ * 	- \ref FreeOSEK_Introduction_TaskGroup <br>
+ * 	- \ref FreeOSEK_Introduction_ApplMode <br>
+ * 	- \ref FreeOSEK_Introduction_Events <br>
+ * 	- \ref FreeOSEK_Introduction_Resources <br>
+ * 	- \ref FreeOSEK_Introduction_Resources_CeilingProtocol <br>
+ * 	- \ref FreeOSEK_Introduction_InternalResources <br>
+ * 	- \ref FreeOSEK_Introduction_Alarms <br>
+ * 	- \ref FreeOSEK_Data_and_Interfaces <br>
+ * - \ref FreeOSEK_Data_and_Interfaces_DataTypes <br>
+ * - \ref FreeOSEK_API <br>
+ * 	- \ref FreeOSEK_API_Context <br>
+ * 	- \ref FreeOSEK_API_Ref <br>
+ * 		- \ref FreeOSEK_API_Ref_ActivateTask <br>
+ * 		- \ref FreeOSEK_API_Ref_CancelAlarm <br>
+ * 		- \ref FreeOSEK_API_Ref_ChainTask <br>
+ * 		- \ref FreeOSEK_API_Ref_ClearEvent <br>
+ * 		- \ref FreeOSEK_API_Ref_DisableAllInterrupts <br>
+ * 		- \ref FreeOSEK_API_Ref_EnableAllInterrupts <br>
+ * 		- \ref FreeOSEK_API_Ref_GetResource <br>
+ * 		- \ref FreeOSEK_API_Ref_GetActiveApplicationMode <br>
+ * 		- \ref FreeOSEK_API_Ref_GetAlarm <br>
+ * 		- \ref FreeOSEK_API_Ref_GetAlarmBase <br>
+ * 		- \ref FreeOSEK_API_Ref_GetEvent <br>
+ * 		- \ref FreeOSEK_API_Ref_GetTaskID <br>
+ * 		- \ref FreeOSEK_API_Ref_GetTaskState <br>
+ * 		- \ref FreeOSEK_API_Ref_ReleaseResource <br>
+ * 		- \ref FreeOSEK_API_Ref_ResumeAllInterrupts <br>
+ * 		- \ref FreeOSEK_API_Ref_ResumeOSInterrupts <br>
+ * 		- \ref FreeOSEK_API_Ref_Schedule <br>
+ * 		- \ref FreeOSEK_API_Ref_SetAbsAlarm <br>
+ * 		- \ref FreeOSEK_API_Ref_SetEvent <br>
+ * 		- \ref FreeOSEK_API_Ref_SetRelAlarm <br>
+ * 		- \ref FreeOSEK_API_Ref_ShutdownOS <br>
+ * 		- \ref FreeOSEK_API_Ref_StartOS <br>
+ * 		- \ref FreeOSEK_API_Ref_SuspendAllInterrupts <br>
+ * 		- \ref FreeOSEK_API_Ref_SuspendOSInterrupts <br>
+ * 		- \ref FreeOSEK_API_Ref_TerminateTask <br>
+ * 		- \ref FreeOSEK_API_Ref_WaitEvent <br>
+ * - \ref FreeOSEK_Arch <br>
+ * 	- \ref FreeOSEK_Arch_Posix <br>
+ * 		- \ref FreeOSEK_Arch_Posix_Timers <br>
+ * 	- \ref FreeOSEK_Windows <br>
+ * 		- \ref FreeOSEK_Windows_Int <br>
+ * 		- \ref FreeOSEK_Windows_Stack <br>
+ * - \ref FreeOSEK_Porting <br>
+ * - \ref FreeOSEK_Requirements <br>
+
+ * \section FreeOSEK_Introduction Introduction
+ *
+ * FreeOSEK is an Open Source implementation of the real time operating
+ * system specified by OSEK-VDX. The philosophy of this OS is to provide a
+ * system with standardized interfaces, scalability, standard error checking
+ * mechanisms and portability.
+ *
+ * \subsection FreeOSEK_Introduction_RunLevels Run Levels
+ *
+ * FreeOSEK provides to types of run levels:
+ *		- Task level
+ *		- ISR level
+ *
+ * ISR level have always precedence to task level. Tasks to each other
+ * and ISR to each others have precedence with their assigned priorities.
+ * Task priorities are signed on configuration time. ISR priorities are
+ * assigned per hardware.
+ *
+ * \subsection FreeOSEK_Introduction_ISR ISR Concept
+ *
+ * FreeOSEK provides two types of ISR (interrupt service routines) called
+ * ISR1 and ISR2, this means ISR Category 1 and Category 2.
+ *
+ * ISR1 are transparent for the OS. This means the OS have no control when this
+ * types of interrupts are executed, this type of interrupts shall be avoided.
+ * No OS interfaces are allowed to be called on ISR1.
+ *
+ * ISR2 are interrupts which are cached by the OS and the OS call the interrupt
+ * code as a function. In this case the stack context is changed and some OS
+ * APIs may be called.
+ *
+ * \subsection FreeOSEK_Introduction_Task Task Concept
+ *
+ * Different as in Windows or Linux on FreeOSEK the tasks are defined statically
+ * on configuration time. This means that after generating the system and
+ * compiling it, no more task can be added to the system. Is not possibly to
+ * create new tasks in a dynamic way.
+ *
+ * FreeOSEK provides two types of tasks:
+ * 	- Basic tasks
+ * 	- Extended tasks
+ *
+ * Every task has to be in one of 3 states:
+ * 	- \b Running: the task is running, only one task every time can be running
+ * 	- \b Read: the task ready and waiting on the execution queue.
+ * 	- \b Suspended: the task is stopped.
+ *
+ *	Extended tasks have an extra state:
+ *		- \b Waiting: the task is waiting for the occurrence of one or more events.
+ *
+ *	Not all combinations of state changes are allowed, here a list of allowed
+ *	task state changes:
+ *		- \b activate: the task is moved from the suspended state to the ready state
+ *		- \b start: the task is moved from the ready state to the running state
+ *		- \b wait: the task is moved from the running state to the waiting state
+ *		- \b release: the task is moved from the waiting state to the ready state
+ *		- \b preempt: the task is moved from the running state to the ready state
+ *		- \b terminate: the task is moved from the running state to the suspended state
+ *
+ * State changes wait and release are only allowed to extended tasks.
+ *
+ * The state changes start, release, and preempt are performed by the
+ * scheduler. The user can only indirect influent this changes. For
+ * example activating a task with a higher priority will preempt any lower
+ * priority preemptive task. Setting a event of a task waiting for it
+ * will release this task
+ *
+ * \subsubsection FreeOSEK_Introduction_Task_Priority Task Priority
+ *
+ * The Scheduler decides in function of the task priority which is the next
+ * task to be started. When two tasks have the same priority the tasks which
+ * was activated before will be executed.
+ *
+ * Task priorities are set on configuration time. A higher value represents
+ * a higher priority.
+ *
+ * The OS has one ready queue for every priority.
+ *
+ * \subsection FreeOSEK_Introduction_Scheduling
+ *
+ * There are to Scheduling methods which can be set to each task. \b preemptive
+ * and \b non \b preemptive.
+ *
+ * \subsubsection FreeOSEK_Introduction_Scheduling_Preemtive Preemptive Tasks
+ *
+ * \b Preemptive tasks can be preempted (interrupted) while running and set back in
+ * ready state when a higher priority task has been activated.
+ *
+ * \subsubsection FreeOSEK_Introduction_Scheduling_Nonpreemtive Non Preemptive
+ * Tasks
+ *
+ * \b Non \b Preemptive tasks can not be interrupted while running. After the
+ * task is to running only the task can decide when it will be finished or
+ * preempted. Interrupts may be executed on this time, but not other tasks.
+ * This type of tasks have their scene specially in small tasks where a task
+ * context switch may take so long time as finishing the task.
+ *
+ * Non Preemptive task may call the Scheduler function to explicit decide points
+ * where a preemption may be possibly.
+ *
+ * In Non Preemptive tasks which doesn't call the Scheduler the OS can make some
+ * resources optimization since this task doesn't need a context space to save
+ * the registers if a task switch occurs.
+ *
+ * \subsection FreeOSEK_Introduction_TaskGroup Group of Tasks
+ *
+ * The user may be interested to have some types or Non Preemptive task for
+ * a group of tasks. This means that some tasks all in a task group  may be
+ * non preemptive to each other but may be preempted by task with higher
+ * priorities of other groups. Every task can belong to one group.
+ *
+ * \subsection FreeOSEK_Introduction_ApplMode Application Modes
+ *
+ * FreeOSEK can be configured to have one or more Application Modes. At
+ * least one Application Mode has to be defined. For every Application
+ * Mode the user can select some tasks and alarms to be started automatically.
+ * The user has to take care to select the adequate Application Mode after
+ * every reset and call the StartOS OS interfaces indicating the Application
+ * Mode.
+ *
+ * \subsection FreeOSEK_Introduction_Events Event Mechanism
+ *
+ * Events are used in FreeOSEK to synchronize events and are only allowed for
+ * extended tasks.
+ *
+ * An extended task can clear and wait for his pre configured events. Every
+ * task or ISR2 can set events of any task. Is not possible to clear events
+ * of other tasks or to wait for events of others tasks.
+ *
+ * \subsection FreeOSEK_Introduction_Resources Resources in FreeOSEK
+ *
+ * Resources are used in FreeOSEK to coordinate access of many tasks with
+ * different priorities to one resource.
+ *
+ * The resource mechanism avoid that two tasks get access to a same resource
+ * any time. To avoid this a \b Priority \b Ceiling \b Protocol is used. This
+ * protocol avoids the possibility that a task tries to use a resource which
+ * is being accessed by other task. This avoids protocol avoids deadlocks too.
+ *
+ * \subsubsection FreeOSEK_Introduction_Resources_CeilingProtocol Ceiling Protocol
+ *
+ * The Ceiling Protocol defines a static priority for every resource. this priority:
+ * 	- shall be set to at least the highest priority of all tasks using this
+ * 	  resource.
+ * 	- shall be lower to the lowest priority of all tasks that do not use this
+ * 	  resource and have higher priority to all task that use the resource.
+ *
+ * When a task get a resource it priority is set to the resource priority and set
+ * back to the original priority when the resource is released.
+ *
+ * \subsection FreeOSEK_Introduction_InternalResources Internal Resources
+ *
+ * Internal resources are like resources but are not visible to the user. Every
+ * task can be assigned maximal to one internal resource. Every time that the
+ * task is started the internal resources will be getted and released when the
+ * tasks terminates.
+ *
+ * This allow a task to have two priorities, one on the ready state to decide when
+ * the task will be executed and other priority when running, this priority decide
+ * when the task will be set back to ready state if preemption occurs.
+ *
+ * \subsection FreeOSEK_Introduction_Alarms Alarms
+ *
+ * TODO
+ *
+ * \section FreeOSEK_Data_and_Interfaces Data types and Interfaces
+ *
+ * This chapter describes the FreeOSEK data types and interfaces.
+ *
+ * \subsection FreeOSEK_Data_and_Interfaces_DataTypes Data Types
+ *
+ * \section FreeOSEK_API FreeOSEK Services
+ *
+ * \subsection FreeOSEK_API_Context Call Context
+ *
+ * The following table indicates for every FreeOSEK interface from which context
+ * can be called.
+ *
+ * <table border="1" cellspacing="0" cellpadding="2">
+ * 	<tr align="center">
+ * 		<td>Service</td><td>Task</td><td>ISR1</td><td>ISR2</td><td>ErrorHook
+ * 		</td><td>PreTaskHook</td><td>PostTaskHook</td><td>StartupHook</td>
+ * 		<td>ShutdownHook</td><td>alarm-callback</td>
+ * 	</tr>
+ * 	<tr align="center">
+ * 		<td>\ref ActivateTask</td><td>X</td><td>-</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref TerminateTask</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref ChainTask</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref Schedule</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref GetTaskID</td><td>X</td><td>-</td><td>X</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref GetTaskState</td><td>X</td><td>-</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref DisableAllInterrupts</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref EnableAllInterrupts</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref SuspendAllInterrupts</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>X</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref ResumeAllInterrupts</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>X</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref SuspendOSInterrupts</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref ResumeOSInterrupts</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref GetResource</td><td>X</td><td>-</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref ReleaseResource</td><td>X</td><td>-</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref SetEvent</td><td>X</td><td>-</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref ClearEvent</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref GetEvent</td><td>X</td><td>-</td><td>X</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref WaitEvent</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref GetAlarmBase</td><td>X</td><td>-</td><td>X</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref GetAlarm</td><td>X</td><td>-</td><td>X</td><td>X</td><td>X</td><td>X</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref SetRelAlarm</td><td>X</td><td>-</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref SetAbsAlarm</td><td>X</td><td>-</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref CancelAlarm</td><td>X</td><td>-</td><td>X</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref GetActiveApplicationMode</td><td>X</td><td>-</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>-</td>
+ *		</tr>
+ *		<tr align="center">
+ *			<td>\ref StartOS</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+ *		</tr>
+ *    <tr align="center">
+ *       <td>\ref ShutdownOS</td><td>X</td><td>-</td><td>X</td><td>X</td><td>-</td><td>-</td><td>X</td><td>-</td><td>-</td>
+ *    </tr>
+ * </table>
+ *
+ * \subsection FreeOSEK_API_Ref Interfaces Reference
+ *
+ * \subsubsection FreeOSEK_API_Ref_ActivateTask ActivateTask Service
+ *
+ * \copydetails ActivateTask
+ *
+ * \b Example:
+ *
+ * \code
+ * /* ... */
+ *
+ * StatusType ret;
+ *
+ * /* The task Checksum_Task has to be defined on the OIL configuration */
+ * /* Activate Checksum_Task */
+ * ret = ActivateTask(Checksum_Task);
+ *
+ * /* ... */
+ * \endcode
+ *
+ * \subsubsection FreeOSEK_API_Ref_CancelAlarm CancelAlarm Service
+ *
+ * \copydetails CancelAlarm
+ *
+ * \b Example:
+ *
+ * \code
+ * /* ... */
+ *
+ * StatusType ret;
+ *
+ * /* The alarm TimeOut_Alarm has to be defined on the OIL configuration */
+ * /* Cancel the alarm TimeOut_Alarm */
+ * ret = CancelAlarm(TimeOut_Alarm);
+ *
+ * /* ... */
+ * \endcode
+ *
+ * \subsubsection FreeOSEK_API_Ref_ChainTask ChainTask Service
+ *
+ * \copydetails ChainTask
+ *
+ * \b Example:
+ *
+ * \code
+ * /* ... */
+ *
+ * StatusType ret;
+ *
+ * /* The task Next_Task has to be defined on the OIL configuration */
+ * /* Chain to task Next_Task */
+ * ret = ChainTask(Next_Task);
+ *
+ * /* ... */
+ * \endcode
+ *
+ * \subsubsection FreeOSEK_API_Ref_ClearEvent ClearEvent Service
+ *
+ * \copydetails ClearEvent
+ *
+ * \b Example:
+ *
+ * \code
+ * /* ... */
+ *
+ * /* local variable for the events */
+ * EventMaskType Event;
+ *
+ * /* set event variable to a valid event */
+ * Event = MsgRx_Event;
+ *
+ *	/* Wait for the Event */
+ * (void)WaitEvent(Event);
+ * /* Clear the Event */
+ * (void)ClearEvent(Event);
+ *
+ * /* MsgRx_Event occurs */
+ * /* do something  */
+ *
+ * /* ... */
+ * \endcode
+ *
+ * \subsubsection FreeOSEK_API_Ref_DisableAllInterrupts DisableAllInterrupts Service
+ *
+ * \copydetails DisableAllInterrupts
+ *
+ * \code
+ * /* ... */
+ *
+ * /* start critical code */
+ * DisableAllInterrupts();
+ *
+ * /* add the critical code */
+ *
+ * /* end critical code */
+ * EnableAllInterrupts();
+ *
+ * /* ... */
+ * \endcode
+ *
+ * \subsubsection FreeOSEK_API_Ref_EnableAllInterrupts EnableAllInterrupts Service
+ *
+ * \copydetails EnableAllInterrupts
+ *
+ * \subsubsection FreeOSEK_API_Ref_GetResource GetResource Service
+ *
+ * \copydetails GetResource
+ *
+ * \subsubsection FreeOSEK_API_Ref_GetActiveApplicationMode GetActiveApplicationMode Service
+ *
+ * \copydetails GetActiveApplicationMode
+ *
+ * \subsubsection FreeOSEK_API_Ref_GetAlarm GetAlarm Service
+ *
+ * \copydetails GetAlarm
+ *
+ * \subsubsection FreeOSEK_API_Ref_GetAlarmBase GetAlarmBase Service
+ *
+ * \copydetails GetAlarmBase
+ *
+ * \subsubsection FreeOSEK_API_Ref_GetEvent GetEvent Service
+ *
+ * \copydetails GetEvent
+ *
+ * \subsubsection FreeOSEK_API_Ref_GetTaskID GetTaskID Service
+ *
+ * \copydetails GetTaskID
+ *
+ * \subsubsection FreeOSEK_API_Ref_GetTaskState GetTaskState Service
+ *
+ * \copydetails GetTaskState
+ *
+ * \subsubsection FreeOSEK_API_Ref_ReleaseResource ReleaseResource Service
+ *
+ * \copydetails ReleaseResource
+ *
+ * \subsubsection FreeOSEK_API_Ref_ResumeAllInterrupts ResumeAllInterrupts Service
+ *
+ * \copydetails ResumeAllInterrupts
+ *
+ * \subsubsection FreeOSEK_API_Ref_ResumeOSInterrupts ResumeOSInterrupts Service
+ *
+ * \copydetails ResumeOSInterrupts
+ *
+ * \subsubsection FreeOSEK_API_Ref_Schedule Schedule Service
+ *
+ * \copydetails Schedule
+ *
+ * \subsubsection FreeOSEK_API_Ref_SetAbsAlarm SetAbsAlarm Service
+ *
+ * \copydetails SetAbsAlarm
+ *
+ * \subsubsection FreeOSEK_API_Ref_SetEvent SetEvent Service
+ *
+ * \copydetails SetEvent
+ *
+ * \subsubsection FreeOSEK_API_Ref_SetRelAlarm SetRelAlarm Service
+ *
+ * \copydetails SetRelAlarm
+ *
+ * \subsubsection FreeOSEK_API_Ref_ShutdownOS ShutdownOS Service
+ *
+ * \copydetails ShutdownOS
+ *
+ * \subsubsection FreeOSEK_API_Ref_StartOS StartOS Service
+ *
+ * \copydetails StartOS
+ *
+ * \b Example:
+ *
+ * \code
+ * void main(void)
+ * {
+ * 	/* local variable to save the mode */
+ * 	AppModeType Mode;
+ * 	/* get the actual mode from a user specific function */
+ * 	Mode = GetMode();
+ * 	/* start the OS indicating the mode */
+ * 	StartOS(Mode);
+ * 	/* StartOS shall never return but in case we put a while(1); */
+ * 	while(1);
+ * }
+ * \endcode
+ *
+ * \subsubsection FreeOSEK_API_Ref_SuspendAllInterrupts SuspendAllInterrupts Service
+ *
+ * \copydetails SuspendAllInterrupts
+ *
+ * \subsubsection FreeOSEK_API_Ref_SuspendOSInterrupts SuspendOSInterrupts Service
+ *
+ * \copydetails SuspendOSInterrupts
+ *
+ * \subsubsection FreeOSEK_API_Ref_TerminateTask TerminateTask Service
+ *
+ * \copydetails TerminateTask
+ *
+ * \subsubsection FreeOSEK_API_Ref_WaitEvent WaitEvent Service
+ *
+ * \copydetails WaitEvent
+ *
+ * \section FreeOSEK_Arch Dependencies to every platform
+ *
+ * \subsection FreeOSEK_Arch_Posix Posix dependencies
+ *
+ * FreeOSEK uses some posix services to simulate the hardware like interrupts and timers.
+ * For the interrupt mechanisms a message queue with signal is used. Every time that you
+ * send a message of only one byte to the message queue /dev/mqueue/BINNAME where BINNAME
+ * is the binary name of the project defined in the Makefile with the PROJECT variable.
+ * As default /dev/mqueue/FreeOSEK. The received byte in this queue is interpreted as an interrupt.
+ *
+ * In posix you need to mount the queues before using this feature, use following 2 commands:
+ *    sudo mkdir /dev/mqueue
+ *    sudo mount -t mqueue none /dev/mqueue
+ *
+ * \subsubsection FreeOSEK_Arch_Posix_Timers Timers Simulations
+ *
+ * The POSIX variant has two simulated HW timers which have an interrupt every 10ms. Anyway
+ * alarms are not working on the pre-beta release.
+ *
+ * \subsection FreeOSEK_Windows Windows dependencies
+ *
+ * If you do not have Linux or any posix compatible system you can run FreeOSEK on windows.
+ * For this propose you are going to need cygwin.
+ * <a href="http://www.cygwin.com/">http://www.cygwin.com/</a>. You can
+ * download and get help for the installation on cygwin page.
+ *
+ * \subsubsection FreeOSEK_Windows_Int Interrupt Simulation on Windows
+ *
+ * To simulate the interrupts on windows you are going to need to install an extra
+ * packet of cywgin called <b>cygrunsrv</b> you can find it in the Admin tools on the
+ * cygwin configuration.
+ *
+ * After installing the packet you have to configure and start the cygserver for the first time,
+ * the cygserver is going to take care of the IPC for the interrupts simulations on Windows.
+ * you have to run the <b>cygserver-config</b> to create the default configuration.
+ *
+ * After loading the default configuration you have to run the server with:
+ * net start cygserver or stop for stoping.
+ *
+ * The last thing you have to do is to enable the server so you have to define
+ * the environment variable CYGWIN to server.
+ *
+ * \code
+ * export CYGWIN=server
+ * \endcode
+ *
+ * Then you can run FreeOSEK on windows. :)
+ *
+ * \subsubsection FreeOSEK_Windows_Stack FreeOSEK stack size on Windows
+ *
+ * The size of the stack of your tasks in windows has to be realtive BIG if
+ * you are going to use system calls. I hope we can find a better solution
+ * for the next release but at this moment the needed stack is about 50kb.
+ * But the problem is not the opensek alos the Cygwin Windows interfaces like
+ * usleep and printf.
+ *
+ * \section FreeOSEK_Porting Porting FreeOSEK to new platforms
+ *
+ * This sections explains how to port FreeOSEK to a new platform. Important is
+ * that you will need a good background of the platform where you want to port
+ * FreeOSEK and to have access to an evaluation board to test and debug your
+ * work.
+ *
+ * We recommend you to base your work for the new platform on an other
+ * platform. If there is a platform which is like yours take this platform
+ * but is not the case you can base your work in posix or windows platform.
+ * Always is easier to have the files and to change it on the way when
+ * you try to compile.
+ *
+ * \subsection FreeOSEK_Porting_DirStructure Directory structure
+ *
+ * First of all lets take a look on the FreeOSEK directory structure. There
+ * are some generic directories and other that are platform specific. To port
+ * FreeOSEK to a new platform you have only to work on the project specific
+ * files, you DON'T have to change anything on the generic directories. If
+ * you change anything on a generic directory the code may not run any more
+ * in another platform, so please take care of this.
+ *
+ * Platform specific directories are:
+ *
+ * - FreeOSEK/gen/src/\<ARCH\>
+ * - FreeOSEK/gen/src/\<ARCH\>/\<CPUTYPE\>
+ * - FreeOSEK/gen/inc/\<ARCH\>
+ * - FreeOSEK/gen/inc/\<ARCH\>/\<CPUTYPE\>
+ * - FreeOSEK/src/\<ARCH\>
+ * - FreeOSEK/src/\<ARCH\>/\<CPUTYPE\>
+ * - FreeOSEK/inc/\<ARCH\>
+ * - FreeOSEK/inc/\<ARCH\>/\<CPUTYPE\>
+ * - FreeOSEK/mak/\<ARCH\>
+ * - FreeOSEK/mak/\<ARCH\>/\<CPUTYPE\>
+ *
+ * Not all directories are needed to all platforms. This depends on how you
+ * create the structure for your platform. First of all you have to define
+ * an architecture name, for example for Windows (cygwin) we suggest win and
+ * for Linux (posix) posix. Please use a lower case name with only alphabetical
+ * letters (a-z).
+ *
+ * After defining your \<ARCH\> name you have to decide if you need one or more
+ * \<CPUTYPEs\>. Some micro-controllers are a main controller with many sub
+ * controllers which for example may have less or more timers, i/o channels
+ * or any other small HW differences. In the case that there is no appreciable
+ * difference you can work only with the \<ARCH\> directories, if you want to
+ * make a difference between \<CPUTYPES\> you can define one or more
+ * \<CPUTYPEs\>. Again for all \<CPUTYPES\> names use lower cases and only
+ * alphabetical letters (a-z).
+ *
+ * Important is that all files that you will write generic for all
+ * \<CPUTYPEs\> have to be written on the \<ARCH\> directories and all specific
+ * for an \<CPUTYPE\> have to be written on the \<CPUTYPE\> directory.
+ *
+ * For example if you don't need separated files for \<CPUTYPEs\> you don't
+ * have to create any \<CPUTYPE\> directory, same if you don't need any special
+ * make file you don't need a FreeOSEK/mak/\<ARCH\> or
+ * FreeOSEK/mak/\<ARCH\>/\<CPUTYPE\>.
+ *
+ * \subsection FreeOSEK_Porting_Files Files to be ported
+ *
+ * The following files have to be defined since they are included
+ * from the generic files or compiled and linked, and are:
+ *
+ * - Osek_Arch.h
+ * - Osek_Internal_Arch.h
+ * - Osek_Internal_Arch_Cfg.h
+ * - Osek_Internal_Cfg.h
+ * - Osek_Internal_Arch_Cfg.c.php
+ * - StartOs_Arch.c
+ * - Osek_Arch.c
+ * - Osek_Internal_Arch.c
+ * - Osek_Internal_Arch_Cfg.c
+ *
+ * \subsubsection FreeOSEK_Porting_Files_Osek_Arch.h Platform header file
+ *
+ * This file will be included from \ref os.h so anything that you write on this
+ * file will be exported to the user, since the user includes in his project
+ * os.h. So please take care that what you write on this file is not internal
+ * FreeOSEK information.
+ *
+ * This file shall define 6 macros or functions (macros are recommended):
+ *
+ * - EnableAllInterrupts_Arch()
+ * - DisableAllInterrupts_Arch()
+ * - ResumeAllInterrupts_Arch()
+ * - SuspendAllInterrupts_Arch()
+ * - ResumeOSInterrupts_Arch()
+ * - SuspendOSInterrupts_Arch()
+ *
+ * This functions or macros are called from the \<SERVICE\>_Interrupts which are
+ * platform independent.
+ *
+ * \b EnableAllInterrupts_Arch()
+ *
+ * This service shall enable all interrupts of the system. Please take care
+ * to enable only interrupts which are used, do not enable interrupts for
+ * which ones without any interrupt service.
+ *
+ * \b DisableAllInterrupts_Arch()
+ *
+ * This service shall disable all interrupts of the system.
+ *
+ * \section FreeOSEK_Requirements Requirements
+ *
+ * - \subpage FreeOSEK_Requirements
+ *
+ */

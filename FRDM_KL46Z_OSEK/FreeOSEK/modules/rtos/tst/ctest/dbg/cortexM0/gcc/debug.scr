@@ -1,0 +1,15 @@
+target extended-remote localhost:3333
+monitor reset init
+monitor mww 0x40043100 0x1B000000
+monitor mdw 0x40043100   # Verify 0x0 shadow register is set properly.
+load
+monitor reset init
+break ConfTestFinish
+continue
+dump value out/rtos/TestResults.bin TestResults
+dump value out/rtos/TestResultsOk.bin TestResultsOk
+dump value out/rtos/SequenceCounter.bin SequenceCounter
+dump value out/rtos/SequenceCounterOk.bin SequenceCounterOk
+dump value out/rtos/ConfTestResult.bin ConfTestResult
+kill
+quit

@@ -1,0 +1,202 @@
+/** \page CREDITS Credits
+ **
+ ** Authors and their contributions to CIAA Firmware:
+ **
+ ** CIAA Firmware 1.0.0 Upa (23.12.2015) LTS
+ **
+ **   Following persons have invest a lot of effort and time to make
+ **   CIAA Firmware become true. We hope you enjoy it. :)
+ **
+ **   - Gustavo Muro (gmuro@fceia.unr.edu.ar):
+ **      - #324 and #323 implement a master/slave system test with 2 CIAAs,
+ **         actually only an initial version is provided.
+ **      - #322 implement a first ioboard test.
+ **      - #327 rename blinking_modbus to blinking_modbus_slave
+ **      - #319 rename configuration files to _Cfg.h
+ **      - #318 fix wrong integer handling in modbus.
+ **
+ **   - Mariano Cerdeiro
+ **      - Add support for the tool coverity to perform static checks
+ **      - #325 blinking_modbus is now called blinking_modbus_slave
+ **      - Improve readme
+ **      - #312 create a report make rule to provide user support
+ **
+ **   - Diego Ezequiel Vommaro
+ **      - Implementation of RTCS Library
+ **      - Implementation of matrix calculation library
+ **
+ **   - Pablo Ridolfi (pridolfi@frba.utn.edu.ar):
+ **      - Extend the RTOS to be multicore
+ **
+ **   - Esteban Volentini (evolentini@gmail.com):
+ **      - #235 implement POSIX UART Drivers for FSL
+ **
+ **   - Juan Cecconi (jcecconi@numetron.com.ar):
+ **      - Improve rtostests to run in RAM.
+ **
+ ** Note: The release 0.7.0-alpha was performed based on a branch. The 0.7.0
+ **       was never performed and therefore it can not be found on this list.
+ **
+ ** CIAA Firmware 0.6.1 (10.08.2015)
+ **
+ **   Following persons have invest a lot of effort and time to make
+ **   CIAA Firmware become true. We hope you enjoy it. :)
+ **
+ **   - Pablo Ridolfi (pridolfi@frba.utn.edu.ar):
+ **      - fix ADC driver for EDU-CIAA-NXP: #305
+ **
+ **   - Juan Cecconi (jcecconi@numetron.com.ar):
+ **      - correct bug in linker script.
+ **
+ **   - Martin Ribelotta:
+ **      - Update lpcopen to 2.16: #306
+ **
+ **   - Mariano Cerdeiro
+ **      - add tests of template module: #308
+ **
+ **   - Gustavo Muro (gmuro@fceia.unr.edu.ar):
+ **      - fix issue with lpcopne: #310
+ **
+ ** CIAA Firmware 0.6.0 (06.08.2015)
+ **
+ **   Following persons have invest a lot of effort and time to make
+ **   CIAA Firmware become true. We hope you enjoy it. :)
+ **
+ **   - Mariano Cerdeiro (mcerdeiro@gmail.com):
+ **      - Correct DIO Devices bug, #301
+ **      - Correct DS bug in Makefile, #285
+ **      - Improve template module, #275
+ **      - Correct RTOS Bug, #279
+ **
+ **   - Juan Cecconi (jcecconi@numetron.com.ar):
+ **      - Improve RTOS Tests to run in RAM, #157
+ **
+ **   - Gustavo Muro (gmuro@fceia.unr.edu.ar):
+ **      - Add Os_Cfg.h to unit test to be able tu run, #279
+ **      - Add modbus_utest.oil to generate osek in the unit test, #282
+ **      - Add posix_utest.oil to generate osek in the unit test, #282
+ **
+ ** CIAA Firmware 0.5.0 (06.06.2015)
+ **
+ **   Following persons have invest a lot of effort and time to make
+ **   CIAA Firmware become true. We hope you enjoy it. :)
+ **
+ **   - Juan Cecconi (jcecconi@numetron.com.ar):
+ **      - Improve Continuous Integration script (make ci)
+ **      - Add first tests for PLC files (modules/plc/test/...)
+ **      - Improve openocd downloads scripting
+ **
+ **   - Mariano Cerdeiro (mcerdeiro@gmail.com):
+ **      - Add first tests for PLC files (modules/plc/test/...)
+ **      - Improve unit test environment to perform tests of files including multiples "_"
+ **
+ **   - Eric Pernia (ericpernia@gmail.com)
+ **      - Add support for IDE4PLC (to use the CIAA Firmware as a PLC)
+ **
+ **   - Pablo Ridolfi (pridolfi@frba.utn.edu.ar):
+ **
+ **   - Gustavo Muro (gmuro@fceia.unr.edu.ar):
+ **      - Fix minimal error in modbus
+ **
+ ** CIAA Firmware 0.4.1 (14.04.2015)
+ **
+ **   - Mariano Cerdeiro (mcerdeiro@gmail.com)
+ **      - Fix minimal error on the root makefile
+ **
+ ** CIAA Firmware 0.4.0 (10.04.2015)
+ **
+ **   Following persons have invest a lot of effort and time to make
+ **   CIAA Firmware become true. We hope you enjoy it. :)
+ **
+ **   - Gustavo Muro (gmuro@fceia.unr.edu.ar):
+ **      - Implement Modbus Master
+ **      - Implement utest for Modbus Master
+ **      - Implement utest for Modbus Transport
+ **
+ **   - Juan Cecconi (jcecconi@numetron.com.ar):
+ **      - Initial test implementation of memcmp and memset
+ **
+ **   - Esteban Volentini (evolentini@gmail.com):
+ **      - Implement Block Driver simulation for windows/linux
+ **
+ **   - Alejandro Permingeat (apermingeat@gmail.com):
+ **      - Port of the firmware to CIAA-FLS
+ **
+ **   - Pablo Ridolfi (pridolfi@frba.utn.edu.ar):
+ **      - Port drivers to EDU-CIAA-NXP
+ **
+ **   - Natalia Requejo:
+ **      - Improve OSEK indentation (tabs to spaces)
+ **
+ **   - Mariano Cerdeiro (mcerdeiro@gmail.com):
+ **      - Rework Firmware directory structure
+ **      - Initial implementation of memcmp and memset
+ **      - Add BOARD to makefile
+ **      - Improve templates files
+ **      - Fix some FreeOSEK bugs
+ **      - Improve FreeOSEK generator adding a -D parameter
+ **
+ ** CIAA Firmware 0.3.0 (14.12.2014)
+ **
+ **   Following persons have invest a lot of effort and time to make
+ **   CIAA Firmware become true. We hope you enjoy it. :)
+ **
+ **   - Gustavo Muro (gmuro@fceia.unr.edu.ar):
+ **      - Implement Modbus
+ **      - Testing of Modbus with a HMI interface
+ **
+ **   - Juan Cecconi (jcecconi@numetron.com.ar):
+ **      - Rework of the makefile to support dependencies of header files, also
+ **         obj files are now stored in out/obj
+ **      - Merge of OSEK port for Win/Linux/Mac to be the same one
+ **      - Implementation of the test automation of the OSEK conformance tests
+ **         for CIAA-NXP
+ **
+ **   - Esteban Volentini (evolentini@gmail.com)
+ **      - Simulation of serial driver for Windows/Linux/Mac over TCPIP ports
+ **      - Implementation of serial driver comunication with host ports in x86
+ **
+ **   - Fernando Bazerque
+ **      - Implementation of ADC and DAC Drivers for CIAA-NXP
+ **
+ **   - Pablo Ridolfi (pridolfi@frba.utn.edu.ar):
+ **      - Implement ISR2 for OSEK for the CIAA-NXP
+ **      - Port of OSEK to CIAA-NXP
+ **
+ **   - Gustavo Ramoscelli
+ **      - improve of lcov tooling (coverage for unit tests)
+ **
+ **   - Mariano Cerdeiro (mcerdeiro@gmail.com)
+ **      - Implementation of the test automation of the OSEK conformance tests
+ **         for Linux
+ **      - Implement ISR2 for OSEK
+ **      - Fix for multiple issues on the OSEK
+ **      - Implementation of OSEK conformance tests
+ **
+ ** CIAA Firmware 0.2.0 (8.8.2014)
+ **
+ **   Following persons have invest a lot of effort and time to make
+ **   CIAA Firmware become true. We hope you enjoy it. :)
+ **
+ **   - Pablo Ridolfi (pridolfi@frba.utn.edu.ar):
+ **      - Port of OSEK RTOS to lpc4337
+ **      - Implementation of UART Drivers
+ **      - Implementation of DIO Drivers
+ **
+ **   - Juan Cecconi (jcecconi@numetron.com.ar):
+ **      - Port OpenOCD configuration for lpx4337
+ **      - A lot of debugging of:
+ **         - UART Drivers
+ **         - POSIX Stack
+ **         - RTOS OSEK
+ **
+ **   - Gustavo Muro (gmuro@fceia.unr.edu.ar):
+ **      - Implement Modbus
+ **      - Testing of Modbus with a HMI interface
+ **
+ **   - Mariano Cerdeiro (mcerdeiro@gmail.com):
+ **      - Implementation of OSEK RTOS (reuse of FreeOSEK project)
+ **      - Implementation of POSIX Stack
+ **
+ **/
+
