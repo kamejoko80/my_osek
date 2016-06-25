@@ -20,6 +20,7 @@ Build instruction :
 5> Connect UART debug port with PC as bellow :
 
    J4_0 (UART5_RX) <--> RS232 TX
+
    J4_1 (UART5_TX) <--> RS232 RX
 
 5> Open project with Emblocks IDE, press F7 to build source files and start debugger.
