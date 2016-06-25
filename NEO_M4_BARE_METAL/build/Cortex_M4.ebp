@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<EmBitz_project_file>
+	<EmBitzVersion release="0.42" revision="0" />
+	<FileVersion major="1" minor="0" />
+	<Project>
+		<Option title="Cortex_M4" />
+		<Option pch_mode="2" />
+		<Option compiler="armgcc_eb" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\Cortex_M4.elf" />
+				<Option object_output="obj\Debug\" />
+				<Option type="0" />
+				<Option compiler="armgcc_eb" />
+				<Device>
+					<Add option="$device=cortex-m4" />
+					<Add option="$lscript=../src/ld/MCIMX6X_M4_tcm.ld" />
+				</Device>
+				<Compiler>
+					<Add option="-mfloat-abi=softfp" />
+					<Add option="-std=gnu99" />
+					<Add option="-O0" />
+					<Add option="-g2" />
+					<Add option="-fdata-sections -ffunction-sections -Wl,--gc-sections" />
+					<Add symbol="CPU_MCIMX6X_M4" />
+					<Add symbol="ARM_MATH_CM4" />
+					<Add symbol="__FPU_PRESENT=1" />
+					<Add symbol="__TARGET_FPU_VFP" />
+				</Compiler>
+				<Assembler>
+					<Add option="-Wa,--gdwarf-2" />
+				</Assembler>
+				<Linker>
+					<Add option="-eb_lib=n" />
+					<Add option="-Wl,--gc-sections" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\Cortex_M4.elf" />
+				<Option object_output="obj\Release\" />
+				<Option type="0" />
+				<Option compiler="armgcc_eb" />
+				<Option projectDeviceOptionsRelation="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-g2" />
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
+				</Compiler>
+				<Linker>
+					<Add option="-Wl,--gc-sections" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="..\doc\README.txt" />
+		<Unit filename="..\src\app\hello_world\hardware_init.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\app\hello_world\main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\board\udoo_neo\inc\board.h" />
+		<Unit filename="..\src\board\udoo_neo\inc\clock_freq.h" />
+		<Unit filename="..\src\board\udoo_neo\inc\gpio_pins.h" />
+		<Unit filename="..\src\board\udoo_neo\inc\pin_mux.h" />
+		<Unit filename="..\src\board\udoo_neo\inc\shared_clock_node.h" />
+		<Unit filename="..\src\board\udoo_neo\src\board.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\board\udoo_neo\src\clock_freq.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\board\udoo_neo\src\gpio_pins.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\board\udoo_neo\src\pin_mux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\ld\MCIMX6X_M4_tcm.ld" />
+		<Unit filename="..\src\platform\CMSIS\Include\arm_common_tables.h" />
+		<Unit filename="..\src\platform\CMSIS\Include\arm_const_structs.h" />
+		<Unit filename="..\src\platform\CMSIS\Include\arm_math.h" />
+		<Unit filename="..\src\platform\CMSIS\Include\core_cm0plus.h" />
+		<Unit filename="..\src\platform\CMSIS\Include\core_cm4.h" />
+		<Unit filename="..\src\platform\CMSIS\Include\core_cmFunc.h" />
+		<Unit filename="..\src\platform\CMSIS\Include\core_cmInstr.h" />
+		<Unit filename="..\src\platform\CMSIS\Include\core_cmSimd.h" />
+		<Unit filename="..\src\platform\devices\device_imx.h" />
+		<Unit filename="..\src\platform\devices\MCIMX6X\include\MCIMX6X_M4.h" />
+		<Unit filename="..\src\platform\devices\MCIMX6X\startup\gcc\startup_MCIMX6X_M4.S">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\devices\MCIMX6X\startup\system_MCIMX6X_M4.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\devices\MCIMX6X\startup\system_MCIMX6X_M4.h" />
+		<Unit filename="..\src\platform\drivers\inc\adc_imx6sx.h" />
+		<Unit filename="..\src\platform\drivers\inc\ccm_analog_imx6sx.h" />
+		<Unit filename="..\src\platform\drivers\inc\ccm_imx6sx.h" />
+		<Unit filename="..\src\platform\drivers\inc\ecspi.h" />
+		<Unit filename="..\src\platform\drivers\inc\epit.h" />
+		<Unit filename="..\src\platform\drivers\inc\flexcan.h" />
+		<Unit filename="..\src\platform\drivers\inc\gpio_imx.h" />
+		<Unit filename="..\src\platform\drivers\inc\i2c_imx.h" />
+		<Unit filename="..\src\platform\drivers\inc\lmem.h" />
+		<Unit filename="..\src\platform\drivers\inc\mu_imx.h" />
+		<Unit filename="..\src\platform\drivers\inc\rdc.h" />
+		<Unit filename="..\src\platform\drivers\inc\rdc_defs_imx6sx.h" />
+		<Unit filename="..\src\platform\drivers\inc\rdc_semaphore.h" />
+		<Unit filename="..\src\platform\drivers\inc\sema4.h" />
+		<Unit filename="..\src\platform\drivers\inc\uart_imx.h" />
+		<Unit filename="..\src\platform\drivers\inc\wdog_imx.h" />
+		<Unit filename="..\src\platform\drivers\src\adc_imx6sx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\ccm_analog_imx6sx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\ccm_imx6sx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\ecspi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\epit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\flexcan.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\gpio_imx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\i2c_imx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\lmem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\mu_imx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\rdc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\rdc_semaphore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\sema4.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\uart_imx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\drivers\src\wdog_imx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\utilities\inc\debug_console_imx.h" />
+		<Unit filename="..\src\platform\utilities\src\debug_console_imx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\utilities\src\print_scan.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\platform\utilities\src\print_scan.h" />
+		<Extensions>
+			<code_completion />
+			<debugger>
+				<target_debugging_settings target="Debug" active_interface="J-link">
+					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="C:\Program Files (x86)\SEGGER\JLink_V510g" executable="JLinkGDBServerCL.exe" description="" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="Generic">
+						<family_options family_id="Generic">
+							<option opt_id="ID_CMD_BEFORE" opt_value="" />
+							<option opt_id="ID_GDB_SERVER_CL" opt_value="-device cortex-m4 -if JTAG -speed 4000" />
+							<option opt_id="ID_CMD_RESET" opt_value="reset init" />
+							<option opt_id="ID_CMD_AFTER" opt_value="load&#x0A;monitor arm semihosting disable&#x0A;" />
+						</family_options>
+					</debug_interface>
+				</target_debugging_settings>
+			</debugger>
+			<envvars />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</EmBitz_project_file>

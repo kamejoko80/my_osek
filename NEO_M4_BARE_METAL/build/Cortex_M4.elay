@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<EmBitz_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="..\doc\README.txt" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="597" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\src\app\hello_world\hardware_init.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1837" topLine="8" />
+		</Cursor>
+	</File>
+	<File name="..\src\app\hello_world\main.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2465" topLine="38" />
+		</Cursor>
+	</File>
+	<File name="..\src\board\udoo_neo\inc\board.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1868" topLine="23" />
+		</Cursor>
+	</File>
+	<File name="..\src\board\udoo_neo\src\board.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3550" topLine="56" />
+		</Cursor>
+	</File>
+	<File name="..\src\board\udoo_neo\src\pin_mux.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1799" topLine="252" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\devices\MCIMX6X\include\MCIMX6X_M4.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1580113" topLine="22610" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\devices\MCIMX6X\startup\gcc\startup_MCIMX6X_M4.S" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="17852" topLine="208" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\drivers\inc\ccm_imx6sx.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7414" topLine="82" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\drivers\inc\rdc.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5053" topLine="216" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\drivers\inc\rdc_defs_imx6sx.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1972" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\drivers\src\uart_imx.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="11433" topLine="283" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\utilities\inc\debug_console_imx.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4338" topLine="96" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\utilities\src\debug_console_imx.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8354" topLine="246" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\utilities\src\print_scan.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1517" topLine="1239" />
+		</Cursor>
+	</File>
+	<File name="..\src\platform\utilities\src\print_scan.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1172" topLine="55" />
+		</Cursor>
+	</File>
+</EmBitz_layout_file>
