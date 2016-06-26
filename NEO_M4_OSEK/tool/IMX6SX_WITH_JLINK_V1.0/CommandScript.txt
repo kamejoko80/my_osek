@@ -1,0 +1,22 @@
+
+; Halt cortex-A9 CPU
+halt
+
+; M4 access for all peripherals on the bus
+w4 0x0207C000, 0x77777777
+w4 0x0217C000, 0x77777777
+w4 0x0217C000, 0x77777777
+
+; CCM_CCGR3 : Open clock gate for M4
+w4 0x020c4074, 0x3FF0000C
+
+; SRC_SCR : Enabe and assert reset M4 core
+w4 0x020d8000, 0xA0480539
+w4 0x020d8000, 0xA0480529
+w4 0x020d8000, 0xA0480539
+w4 0x020d8000, 0xA0480529
+
+; Wait for stability
+sleep 5000
+
+

@@ -1,0 +1,153 @@
+IMX6SX HOW TO DEBUG CORE M4 USING JLINK (TEST WITH JLINK VERSION V5.10g)
+
+1. PREFACE
+
+IMX6SX application processor has 2 cores inside, and ARM cortex-A9 and an ARM cortex-M4. 
+By default core M4 is disabled, to debug core M4, there is only one way that core A9 runs 
+firstly and enables core M4. 
+
+This guide shows how to configure Jlink and debug program running on M4.
+
+-----------------------------------------------------
+
+2. ENABLE CORE M4
+
+#define AIPS1_ON_BASE_ADDR  0x0207C000
+#define AIPS2_ON_BASE_ADDR  0x0217C000
+#define AIPS3_ON_BASE_ADDR  0x0227C000 
+#define CCM_CCGR3_ADDR      0x020C4074
+#define SRC_SCR_ADDR        0x020D8000
+
+M4 access for all peripheral on the bus 
+
+=> AIPS1_ON = 0x77777777
+=> AIPS2_ON = 0x77777777
+=> AIPS3_ON = 0x77777777
+
+Open clock gate for core M4                
+
+=> CCM_CCGR3 = 0x3FF0000C
+
+Enable and assert reset core M4
+
+=> SRC_SCR = 0xA0480539
+=> SRC_SCR = 0xA0480529
+
+-----------------------------------------------------
+   
+Jlink command script as bellow :
+
+
+; Halt cortex-A9 CPU
+halt
+
+; M4 access for all peripherals on the bus
+w4 0x0207C000, 0x77777777
+w4 0x0217C000, 0x77777777
+w4 0x0217C000, 0x77777777
+
+; CCM_CCGR3 : Open clock gate for M4
+w4 0x020c4074, 0x3FF0000C
+
+; SRC_SCR : Enabe and assert reset M4 core
+w4 0x020d8000, 0xA0480539
+w4 0x020d8000, 0xA0480529
+w4 0x020d8000, 0xA0480539
+w4 0x020d8000, 0xA0480529
+
+; Wait for stability
+sleep 5000
+
+-----------------------------------------------------
+                  
+3. JLINK SCRIPT FOR A9 (iMX6SoloX_Connect_CortexA9.JLinkScript)
+
+void ResetTarget(void) {
+  // In case cores 1-3 are reset, we do nothing, 
+  //  as we would lose connection to these cores, when resetting the device
+  //  as a reset disables the clock to them.
+}
+
+void InitTarget(void) {
+  int WordAcc;
+  int v;
+
+  Report("******************************************************");
+  Report("J-Link script: iMX6 SoloX Cortex-A9 core J-Link script");
+  Report("******************************************************");
+  JLINK_CORESIGHT_Configure("IRPre=4;DRPre=1;IRPost=9;DRPost=2;IRLenDevice=4");
+  CPU = CORTEX_A9;        // Pre-select that we have a Cortex-A5 connected
+  JTAG_AllowTAPReset = 1; // J-Link is allowed to use a TAP reset for JTAG-chain auto-detection
+  CORESIGHT_CoreBaseAddr = 0x02150000;
+  CORESIGHT_AddAP(0, CORESIGHT_AHB_AP);
+  CORESIGHT_AddAP(1, CORESIGHT_APB_AP);
+  CORESIGHT_IndexAPBAPToUse = 1;
+  JTAG_SetDeviceId(0, 0x4BA00477);  // 4-bits IRLen
+  JTAG_SetDeviceId(1, 0x4BA00477);  // 4-bits IRLen
+  JTAG_SetDeviceId(2, 0x00000001);  // 5-bits IRLen
+  JTAG_SetDeviceId(3, 0x0891C01D);  // 4-bits IRLen
+}
+
+-----------------------------------------------------
+
+4. JLINK SCRIPT FOR M4 (iMX6SoloX_Connect_CortexM4.JLinkScript)
+
+void ResetTarget(void) {
+  // In case cores 1-3 are reset, we do nothing, 
+  //  as we would lose connection to these cores, when resetting the device
+  //  as a reset disables the clock to them.
+}				  
+				  
+void InitTarget(void) {
+  int WordAcc;
+  int v;
+
+  Report("******************************************************");
+  Report("J-Link script: iMX6 SoloX Cortex-M4 core J-Link script");
+  Report("******************************************************");
+  JLINK_CORESIGHT_Configure("IRPre=0;DRPre=0;IRPost=13;DRPost=3;IRLenDevice=4");
+  CPU = CORTEX_M4;        // Pre-select that we have a Cortex-A5 connected
+  JTAG_AllowTAPReset = 1; // J-Link is allowed to use a TAP reset for JTAG-chain auto-detection
+  CORESIGHT_AddAP(0, CORESIGHT_AHB_AP);
+  CORESIGHT_AddAP(1, CORESIGHT_APB_AP);
+  CORESIGHT_IndexAHBAPToUse = 0;
+  JTAG_SetDeviceId(0, 0x4BA00477);  // 4-bits IRLen
+  JTAG_SetDeviceId(1, 0x4BA00477);  // 4-bits IRLen
+  JTAG_SetDeviceId(2, 0x00000001);  // 5-bits IRLen
+  JTAG_SetDeviceId(3, 0x0891C01D);  // 4-bits IRLen
+}
+
+-----------------------------------------------------
+
+5. CONNECT TO A9, RUN COMMAND SCRIPT TO ACTIVATE CORE M4
+
+   Jlink.exe 
+   -device cortex-a9 
+   -if JTAG 
+   -speed 4000 
+   -jtagconf -1,-1 
+   -autoconnect 1 
+   -JLinkScriptFile D:\Workspace\UDOO_NEO\iMX6SoloX_Connect_CortexA9.JLinkScript 
+   -CommandFile D:\Workspace\UDOO_NEO\CommandScript.txt
+
+-----------------------------------------------------   
+   
+6. GDB COMMAND LINE FOR DEBUGGING M4
+
+   JLinkGDBServerCL 
+   -device cortex-m4 
+   -if JTAG -speed 4000 
+   -scriptfile D:\Workspace\UDOO_NEO\iMX6SoloX_Connect_CortexM4.JLinkScript   
+
+-----------------------------------------------------
+
+7. FOR CONVINIENT WE CAN COPY A9 and M4 script file into JLINK INSTALLATION PATH
+  
+   - iMX6SoloX_Connect_CortexA9.JLinkScript
+   - iMX6SoloX_Connect_CortexM4.JLinkScript
+   - CommandScript.txt
+
+   C:\Program Files (x86)\SEGGER\JLink_V510g\    
+
+
+				  
