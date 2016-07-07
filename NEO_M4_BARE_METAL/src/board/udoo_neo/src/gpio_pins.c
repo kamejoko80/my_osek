@@ -33,14 +33,14 @@
 
 gpio_config_t gpioLed = {
     "DEBUG_LED",                                    /* name */
-    &IOMUXC_SW_MUX_CTL_PAD_CSI_PIXCLK,              /* muxReg */
+    &IOMUXC_SW_MUX_CTL_PAD_NAND_DATA02,              /* muxReg */
     5,                                              /* muxConfig */
-    &IOMUXC_SW_PAD_CTL_PAD_CSI_PIXCLK,              /* padReg */
-    IOMUXC_SW_PAD_CTL_PAD_CSI_DATA05_DSE(6)|        /* padConfig */
-	IOMUXC_SW_PAD_CTL_PAD_CSI_DATA05_SPEED(2)|
-	IOMUXC_SW_PAD_CTL_PAD_CSI_DATA05_PKE_MASK,
-    GPIO1,                                          /* base */
-    24                                              /* pin */
+    &IOMUXC_SW_PAD_CTL_PAD_NAND_DATA02,              /* padReg */
+    IOMUXC_SW_PAD_CTL_PAD_NAND_DATA02_DSE(6)|        /* padConfig */
+	IOMUXC_SW_PAD_CTL_PAD_NAND_DATA02_SPEED(2)|
+	IOMUXC_SW_PAD_CTL_PAD_NAND_DATA02_PKE_MASK,
+    GPIO4,                                          /* base */
+    6                                              /* pin */
 };
 
 gpio_config_t gpioSensorAccInt = {

@@ -29,6 +29,8 @@
  */
 #include <stdbool.h>
 #include "MCIMX6X_M4.h"
+#include "ccm_imx6sx.h"
+#include "ccm_analog_imx6sx.h"
 
 /* ----------------------------------------------------------------------------
    -- Helper macro
@@ -62,7 +64,15 @@ void SystemInit(void)
     SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
 #endif
 
+    /* Power up PLL2 and enable clock output 528M. */
+    CCM_ANALOG_SetPllBypass(CCM_ANALOG, ccmAnalogPllSysControl, false);
+    CCM_ANALOG_EnablePllClock(CCM_ANALOG, ccmAnalogPllSysClock);
+    CCM_ANALOG_PowerUpPll(CCM_ANALOG, ccmAnalogPllSysControl);
+
     /* M4 core clock root configuration. */
+    CCM_SetRootMux(CCM, ccmRootM4PreClkSel, ccmRootmuxM4PreClkPll2);
+    /* Set relevant divider = 2. */
+    CCM_SetRootDivider(CCM, ccmRootM4Podf, 1);
 
     /* Initialize Cache */
     /* Enable System Bus Cache */

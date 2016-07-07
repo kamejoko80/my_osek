@@ -28,77 +28,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-///////////////////////////////////////////////////////////////////////////////
-//  Includes
-///////////////////////////////////////////////////////////////////////////////
-#include "board.h"
-#include "debug_console_imx.h"
-#include "gpio_pins.h"
-#include "gpio_imx.h"
-#include "gpio_ctrl.h"
-////////////////////////////////////////////////////////////////////////////////
-// Code
-////////////////////////////////////////////////////////////////////////////////
-typedef uint32_t timer_ticks_t;
-volatile timer_ticks_t timer_delayCount;
+#ifndef __GPIO_CTRL_H__
+#define __GPIO_CTRL_H__
 
-void timer_sleep (timer_ticks_t ticks)
-{
-  timer_delayCount = ticks;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-  // Busy wait until the SysTick decrements the counter to zero.
-  while (timer_delayCount != 0u)
-    ;
+/*!
+ * @brief Initialize GPIO controller.
+ */
+void GPIO_Ctrl_Init(void);
+
+/*!
+ * @brief Toggle LED on/off status
+ */
+void GPIO_Ctrl_ToggleLed(void);
+
+
+#ifdef __cplusplus
 }
+#endif
 
-void timer_tick (void)
-{
-  // Decrement to zero the counter used by the delay routine.
-  if (timer_delayCount != 0u)
-    {
-      --timer_delayCount;
-    }
-}
-
-// ----- SysTick_Handler() ----------------------------------------------------
-void SysTick_Handler(void)
-{
-    timer_tick ();
-}
-
-int main(void)
-{
-    /* Initialize demo application pins setting and clock setting */
-    hardware_init();
-
-    /* Recalculate the CPU frequency */
-    SystemCoreClockUpdate();
-
-    /* GPIO module initialize, configure "LED" as output and button as interrupt mode. */
-    GPIO_Ctrl_Init();
-
-    /* Activate SysTick */
-    SysTick_Config(SystemCoreClock/1000);
-
-    /* Update priority set by SysTick_Config */
-    NVIC_SetPriority(SysTick_IRQn, (1<<2) - 1);
-
-    /* Enable system tick interrupt */
-    NVIC_EnableIRQ(SysTick_IRQn);
-
-    /* Print out message */
-    debug_printf("Udoo Neo M4 Demo\r\n");
-
-
-    // Should never reach this point.
-    while (true)
-    {
-        timer_sleep(500);
-        GPIO_Ctrl_ToggleLed();
-    }
-}
-
-
+#endif /* __GPIO_CTRL_H__ */
 /*******************************************************************************
  * EOF
  ******************************************************************************/

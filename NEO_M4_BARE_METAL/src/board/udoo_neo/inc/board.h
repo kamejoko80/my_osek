@@ -32,6 +32,7 @@
 #define __BOARD_H__
 
 #include "pin_mux.h"
+#include "gpio_pins.h"
 #include "rdc.h"
 #include "rdc_defs_imx6sx.h"
 #include "ccm_imx6sx.h"

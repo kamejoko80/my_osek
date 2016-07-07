@@ -4,7 +4,7 @@ IMX6SX HOW TO DEBUG CORE M4 USING JLINK (TEST WITH JLINK VERSION V5.10g)
 
 IMX6SX application processor has 2 cores inside, and ARM cortex-A9 and an ARM cortex-M4. 
 By default core M4 is disabled, to debug core M4, there is only one way that core A9 runs 
-firstly and enables core M4. 
+firstly and enable core M4. 
 
 This guide shows how to configure Jlink and debug program running on M4.
 

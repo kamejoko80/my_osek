@@ -11,9 +11,12 @@
 				<Option output="bin\Debug\Cortex_M4.elf" />
 				<Option object_output="obj\Debug\" />
 				<Option type="0" />
+				<Option create_hex="1" />
 				<Option compiler="armgcc_eb" />
 				<Device>
 					<Add option="$device=cortex-m4" />
+					<Add option="$arch=armv7e-m" />
+					<Add option="$fpu=fpv4-sp-d16" />
 					<Add option="$lscript=../src/ld/MCIMX6X_M4_tcm.ld" />
 				</Device>
 				<Compiler>
@@ -34,6 +37,11 @@
 					<Add option="-eb_lib=n" />
 					<Add option="-Wl,--gc-sections" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="arm-none-eabi-objcopy -O binary $(TARGET_OUTPUT_DIR)/$(TARGET_OUTPUT_BASENAME).elf $(TARGET_OUTPUT_DIR)/$(TARGET_OUTPUT_BASENAME).bin" />
+					<Mode before="0" />
+					<Mode after="1" />
+				</ExtraCommands>
 			</Target>
 			<Target title="Release">
 				<Option output="bin\Release\Cortex_M4.elf" />
@@ -56,6 +64,9 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="..\doc\README.txt" />
+		<Unit filename="..\src\app\hello_world\gpio_ctrl.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\app\hello_world\hardware_init.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -170,7 +181,7 @@
 			<code_completion />
 			<debugger>
 				<target_debugging_settings target="Debug" active_interface="J-link">
-					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="C:\Program Files (x86)\SEGGER\JLink_V510g" executable="JLinkGDBServerCL.exe" description="" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="Generic">
+					<debug_interface interface_id="J-link" ip_address="localhost" ip_port="2331" path="C:\Program Files (x86)\SEGGER\JLink_V512e" executable="JLinkGDBServerCL.exe" description="" dont_start_server="false" backoff_time="2000" options="0" reg_filter="0" active_family="Generic">
 						<family_options family_id="Generic">
 							<option opt_id="ID_CMD_BEFORE" opt_value="" />
 							<option opt_id="ID_GDB_SERVER_CL" opt_value="-device cortex-m4 -if JTAG -speed 4000" />

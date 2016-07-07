@@ -58,6 +58,9 @@ MEMORY
   m_data                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00008000
 }
 
+__FLASH_START = ORIGIN(m_interrupts);
+__FLASH_END   = ORIGIN(m_text) + LENGTH(m_text);
+
 /* Define output sections */
 SECTIONS
 {

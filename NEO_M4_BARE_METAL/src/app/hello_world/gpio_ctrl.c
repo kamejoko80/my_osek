@@ -27,77 +27,57 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/****************************************************************************
+*
+* Comments:
+*   This file contains the functions which write and read the SPI memories
+*   using the ECSPI driver in interrupt mode.
+*
+****************************************************************************/
 
-///////////////////////////////////////////////////////////////////////////////
-//  Includes
-///////////////////////////////////////////////////////////////////////////////
-#include "board.h"
-#include "debug_console_imx.h"
+#include <stdbool.h>
 #include "gpio_pins.h"
-#include "gpio_imx.h"
+#include "board.h"
 #include "gpio_ctrl.h"
-////////////////////////////////////////////////////////////////////////////////
-// Code
-////////////////////////////////////////////////////////////////////////////////
-typedef uint32_t timer_ticks_t;
-volatile timer_ticks_t timer_delayCount;
+#include "gpio_imx.h"
+#include "rdc_semaphore.h"
+#include "debug_console_imx.h"
 
-void timer_sleep (timer_ticks_t ticks)
+static void GPIO_Ctrl_InitLedPin()
 {
-  timer_delayCount = ticks;
+    gpio_init_config_t ledInit = {
+        .pin           = BOARD_GPIO_LED_CONFIG->pin,
+        .direction     = gpioDigitalOutput,
+        .interruptMode = gpioNoIntmode
+    };
 
-  // Busy wait until the SysTick decrements the counter to zero.
-  while (timer_delayCount != 0u)
-    ;
+    /* Acquire RDC semaphore before access GPIO to avoid conflict, it's
+     * necessary when GPIO RDC is configured as Semaphore Required */
+    RDC_SEMAPHORE_Lock(BOARD_GPIO_LED_RDC_PDAP);
+
+    GPIO_Init(BOARD_GPIO_LED_CONFIG->base, &ledInit);
+
+    RDC_SEMAPHORE_Unlock(BOARD_GPIO_LED_RDC_PDAP);
 }
 
-void timer_tick (void)
+void GPIO_Ctrl_Init()
 {
-  // Decrement to zero the counter used by the delay routine.
-  if (timer_delayCount != 0u)
-    {
-      --timer_delayCount;
-    }
+    GPIO_Ctrl_InitLedPin();
 }
 
-// ----- SysTick_Handler() ----------------------------------------------------
-void SysTick_Handler(void)
+void GPIO_Ctrl_ToggleLed()
 {
-    timer_tick ();
+    static bool on = false;
+
+    RDC_SEMAPHORE_Lock(BOARD_GPIO_LED_RDC_PDAP);
+
+    GPIO_WritePinOutput(BOARD_GPIO_LED_CONFIG->base,
+            BOARD_GPIO_LED_CONFIG->pin, on ? gpioPinSet : gpioPinClear);
+
+    RDC_SEMAPHORE_Unlock(BOARD_GPIO_LED_RDC_PDAP);
+
+    on = !on;
 }
-
-int main(void)
-{
-    /* Initialize demo application pins setting and clock setting */
-    hardware_init();
-
-    /* Recalculate the CPU frequency */
-    SystemCoreClockUpdate();
-
-    /* GPIO module initialize, configure "LED" as output and button as interrupt mode. */
-    GPIO_Ctrl_Init();
-
-    /* Activate SysTick */
-    SysTick_Config(SystemCoreClock/1000);
-
-    /* Update priority set by SysTick_Config */
-    NVIC_SetPriority(SysTick_IRQn, (1<<2) - 1);
-
-    /* Enable system tick interrupt */
-    NVIC_EnableIRQ(SysTick_IRQn);
-
-    /* Print out message */
-    debug_printf("Udoo Neo M4 Demo\r\n");
-
-
-    // Should never reach this point.
-    while (true)
-    {
-        timer_sleep(500);
-        GPIO_Ctrl_ToggleLed();
-    }
-}
-
 
 /*******************************************************************************
  * EOF
