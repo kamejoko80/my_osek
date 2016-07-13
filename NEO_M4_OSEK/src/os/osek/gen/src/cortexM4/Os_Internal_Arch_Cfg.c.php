@@ -58,6 +58,7 @@
 /*
  * modification history (new versions first)
  * -----------------------------------------------------------
+ * v0.1.2 20160713 PR   Phuong Dang : change interrupt sources to i.MX6SX
  * v0.1.2 20160426 PR   Phuong Dang : change interrupt sources to STM32F4
  * v0.1.2 20141130 PR   Added ISR cat. 2 enabling and disabling functions.
  * v0.1.1 20141115 PR   added LPC43xx interrupt sources, spelling mistake fixed
@@ -66,6 +67,7 @@
 
 /*==================[inclusions]=============================================*/
 #include "Os_Internal.h"
+#include "device_imx.h"
 
 /*==================[macros and definitions]=================================*/
 
