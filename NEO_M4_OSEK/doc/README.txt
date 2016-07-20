@@ -12,6 +12,7 @@ Setting up environment, the following software packages are required :
 Jlink software package version : JLink V5.12d or later.
 UDOO Linux Image               : udoobuntu-udoo-neo-minimal_2.0rc2.zip
 PHP CLI for Windows            : php-5.6.20-nts-Win32-VC11-x64.zip
+EmBitz IDE                     : EmBitz 0.42
 
 Uart Debug Connection:
 

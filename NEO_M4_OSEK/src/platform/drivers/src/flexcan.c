@@ -608,7 +608,7 @@ void FLEXCAN_GetErrCounter(CAN_Type* base, uint8_t* txError, uint8_t* rxError)
  *END**************************************************************************/
 void FLEXCAN_EnableRxFifo(CAN_Type* base, uint8_t numOfFilters)
 {
-    uint8_t maxNumMb;
+    uint8_t maxNumMb, i;
 
     assert(numOfFilters <= 0xF);
 
@@ -626,7 +626,7 @@ void FLEXCAN_EnableRxFifo(CAN_Type* base, uint8_t numOfFilters)
 
     maxNumMb = (CAN_MCR_REG(base) & CAN_MCR_MAXMB_MASK) + 1;
 
-    for (uint8_t i = 0; i < maxNumMb; i++)
+    for (i = 0; i < maxNumMb; i++)
     {
         /* RX individual mask*/
         CAN_RXIMR_REG(base,i) = CAN_RXIMR0_RXIMR63_MI31_MI0_MASK;

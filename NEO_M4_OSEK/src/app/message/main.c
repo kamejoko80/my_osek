@@ -32,18 +32,21 @@
 //  Includes
 ///////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "board.h"
 #include "gpio_pins.h"
 #include "gpio_imx.h"
+#include "uart_imx.h"
 #include "debug_console_imx.h"
 #include "os.h"
+#include "message.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Macro definition
 ////////////////////////////////////////////////////////////////////////////////
 
-#define TRUE  1
-#define FALSE 0
+#define BUFF_SIZE 32
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables definition
@@ -52,7 +55,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
-
 
 void Init_GPIO_LED(void)
 {
@@ -68,6 +70,7 @@ void Init_GPIO_LED(void)
 
 int main(void)
 {
+
    /* Initialize demo application pins setting and clock setting */
    hardware_init();
 
@@ -86,7 +89,7 @@ int main(void)
    StartOS(AppMode1);
 
    /* we shouldn't return here */
-   while(TRUE);
+   while(1);
 }
 
 void ErrorHook(void)
@@ -96,97 +99,112 @@ void ErrorHook(void)
 	ShutdownOS(0);
 }
 
-TASK(TaskInit)
-{
-	/* Set 500 tick alarm for TaskPeriodic */
-	debug_printf("InitTask: SetRelAlarm for TaskPeriodic.\r\n");
-	SetRelAlarm(ActivateTaskPeriodic, 0, 500);
-
-	/* Set 1000 tick callback alarm */
-	debug_printf("InitTask: SetRelAlarm for AppCallback.\r\n");
-	SetRelAlarm(AppCallbackAlarm, 100, 1000);
-
-	/* Activate TaskBlink */
-	debug_printf("InitTask: Activate TaskBlink.\r\n");
-	ActivateTask(TaskBlink);
-
-	/* Activate TaskBackground */
-	ActivateTask(TaskBackground);
-
-	/* end InitTask */
-	debug_printf("InitTask: TerminateTask().\r\n");
-	TerminateTask();
-}
 
 /*
  * This task waits for an event to be set in order
  * to continue execution.
  */
-TASK(TaskBlink)
+TASK(TaskReceive)
 {
-    static bool flag = FALSE;
+    MessageType *MsgRcv1, *MsgRcv2;
 
-	debug_printf("TaskBlink: Init.\r\n");
 	while(1)
 	{
-		debug_printf("TaskBlink: Waiting for event...\r\n");
-		WaitEvent(evBlink);
-		ClearEvent(evBlink);
-		debug_printf("TaskBlink: LED Toggle.\r\n");
+	    /* Wait for message event */
+		WaitEvent(evMessage);
+		ClearEvent(evMessage);
 
-        /* Toggle the LED */
-		if(TRUE == flag)
+        /* Get message */
+        MsgRcv1 = Message_Get(1);
+        MsgRcv2 = Message_Get(2);
+
+        /* Check valid message */
+        if ((MsgRcv1 == NULL) || (MsgRcv1 == NULL))
         {
-            GPIO_WritePinOutput(gpioLed.base, gpioLed.pin, gpioPinClear);
-            flag = FALSE;
-        }
-        else
-        {
-            GPIO_WritePinOutput(gpioLed.base, gpioLed.pin, gpioPinSet);
-            flag = TRUE;
+            debug_printf("could not get message\r\n");
+            break;
         }
 
+        debug_printf("MsgRcv1 : %X %X %X %X\r\n",
+                                MsgRcv1->data[0],
+                                MsgRcv1->data[1],
+                                MsgRcv1->data[2],
+                                MsgRcv1->data[3]);
+
+        debug_printf("MsgRcv2 : %X %X %X %X\r\n",
+                                MsgRcv2->data[0],
+                                MsgRcv2->data[1],
+                                MsgRcv2->data[2],
+                                MsgRcv2->data[3]);
+
+        /* Free message */
+        Message_Free(MsgRcv1);
+        Message_Free(MsgRcv2);
 	}
+
 	TerminateTask();
 }
 
 /*
- * This is a periodic task.
+ * This task sends message periodically
  */
-TASK(TaskPeriodic)
+TASK(TaskSend)
 {
-	debug_printf("TaskPeriodic: Event set.\r\n");
-	SetEvent(TaskBlink, evBlink);
+    MessageType *Msg1, *Msg2;
 
-	/* end TaskPeriodic */
+    /* Start periodic alarm */
+    SetRelAlarm(AlarmSend, 100, 1000);
+
+	while(1)
+	{
+        /* Wait for alarm */
+		WaitEvent(evAlarmSend);
+		ClearEvent(evAlarmSend);
+
+        /* Allocate message */
+        Msg1 = Message_Allocate(4);
+        Msg2 = Message_Allocate(4);
+
+        if ((Msg1 == NULL) || (Msg1 == NULL))
+        {
+            debug_printf("could not allocate message\r\n");
+            break;
+        }
+
+        /* Prepare message data */
+        Msg1->id = 1;
+        Msg1->data[0] = 0x10;
+        Msg1->data[1] = 0x11;
+        Msg1->data[2] = 0x12;
+        Msg1->data[3] = 0x13;
+
+        Msg2->id = 2;
+        Msg2->data[0] = 0x20;
+        Msg2->data[1] = 0x21;
+        Msg2->data[2] = 0x22;
+        Msg2->data[3] = 0x23;
+
+        /* Queue message */
+        Message_Queue(Msg1);
+        Message_Queue(Msg2);
+
+        /* Send message */
+        Message_Send(TaskReceive, evMessage);
+	}
+
 	TerminateTask();
 }
 
 /*
- * Just a background task with an infinite loop,
+ * Just a idle task with an infinite loop,
  * it has to be defined with the minimum priority!!!
  */
-TASK(TaskBackground)
+TASK(TaskIdle)
 {
-	volatile int i = 0;
-	debug_printf("TaskBackground: Running!\r\n");
 	while(1)
 	{
-		i++;
-		if(i == 0xFFFFF)
-		{
-			debug_printf("TaskBackground still running...\r\n");
-			i = 0;
-		}
-	}
-}
 
-/*
- * Alarm Callback example.
- */
-ALARMCALLBACK(AppCallback)
-{
-	debug_printf("AppCallback.\r\n");
+	}
 }
 
 

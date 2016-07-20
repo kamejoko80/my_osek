@@ -47,14 +47,21 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
+HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x1000;
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x2000;
+
+/*
+ * m_interrupts          (RX)  : ORIGIN = 0x1FFF8000, LENGTH = 0x00000240
+ * m_text                (RX)  : ORIGIN = 0x1FFF8240, LENGTH = 0x00007DC0
+ * m_data                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00008000
+ */
 
 /* Specify the memory areas */
 MEMORY
 {
-  m_interrupts          (RX)  : ORIGIN = 0x1FFF8000, LENGTH = 0x00000240
-  m_text                (RX)  : ORIGIN = 0x1FFF8240, LENGTH = 0x00007DC0
+  m_interrupts          (RX)  : ORIGIN = 0x1FFF8000, LENGTH = 0x00000300
+  m_text                (RX)  : ORIGIN = 0x1FFF8300, LENGTH = 0x00006000
+  m_heap                (RW)  : ORIGIN = 0x1FFFE300, LENGTH = 0x00001D00
   m_data                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00008000
 }
 
@@ -198,7 +205,7 @@ SECTIONS
     __HeapBase = .;
     . += HEAP_SIZE;
     __HeapLimit = .;
-  } > m_data
+  } > m_heap
 
   .stack :
   {

@@ -12,15 +12,22 @@
 				<Option object_output="obj\Debug\" />
 				<Option type="0" />
 				<Option compiler="armgcc_eb" />
+				<Option projectCompilerOptionsRelation="1" />
+				<Option projectLinkerOptionsRelation="1" />
 				<Device>
 					<Add option="$device=cortex-m4" />
 					<Add option="$fpu=fpv4-sp-d16" />
 					<Add option="$lscript=../ld/MCIMX6X_M4_tcm.ld" />
+					<Add option="$stack=0x400" />
+					<Add option="$heap=0x10000" />
 				</Device>
 				<Compiler>
-					<Add option="-std=gnu99" />
+					<Add option="-mfloat-abi=hard" />
+					<Add option="-Wall" />
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
 					<Add option="-O0" />
-					<Add option="-g2" />
+					<Add option="-g3" />
 					<Add option="-fdata-sections -ffunction-sections -Wl,--gc-sections" />
 					<Add symbol="CPU_MCIMX6X_M4" />
 					<Add symbol="ARM_MATH_CM4" />
@@ -30,9 +37,11 @@
 				</Compiler>
 				<Assembler>
 					<Add option="-Wa,--gdwarf-2" />
+					<Add option="-mthumb" />
 				</Assembler>
 				<Linker>
 					<Add option="-eb_lib=n" />
+					<Add option="-eb_start_files" />
 					<Add option="-Wl,--gc-sections" />
 				</Linker>
 				<ExtraCommands>
@@ -277,6 +286,11 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\..\..\platform\utilities\src\print_scan.h" />
+		<Unit filename="..\..\..\services\inc\list_head.h" />
+		<Unit filename="..\..\..\services\inc\message.h" />
+		<Unit filename="..\..\..\services\src\message.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger>

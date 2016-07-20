@@ -32,16 +32,41 @@
 //  Includes
 ///////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
+#include <string.h>
 #include "board.h"
 #include "gpio_pins.h"
 #include "gpio_imx.h"
+#include "uart_imx.h"
 #include "debug_console_imx.h"
 #include "os.h"
+
+////////////////////////////////////////////////////////////////////////////////
+// Macro definition
+////////////////////////////////////////////////////////////////////////////////
+
+#define BUFF_SIZE 32
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Global variables definition
+////////////////////////////////////////////////////////////////////////////////
+
+typedef void(*CallBack_Type)(uint8_t * buffer, uint8_t len);
+
+static uint8_t        g_len = 0;
+static uint8_t        g_rx_count = 0;
+static uint8_t       *g_buffer = 0;
+static CallBack_Type  g_callback = 0;
+static uint8_t        g_rx_buffer[BUFF_SIZE];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
 
+void UART_AsyncReceive(uint8_t len, uint8_t * buffer, CallBack_Type CallBack);
+void UART_RxComplete(uint8_t * buffer, uint8_t len);
+void Menu_Display(void);
+void Process_Item(uint32_t Item);
 
 void Init_GPIO_LED(void)
 {
@@ -75,7 +100,7 @@ int main(void)
    StartOS(AppMode1);
 
    /* we shouldn't return here */
-   while(TRUE);
+   while(1);
 }
 
 void ErrorHook(void)
@@ -92,10 +117,53 @@ void ErrorHook(void)
  */
 TASK(TaskMenu)
 {
+    EventMaskType Event;
+
 	while(1)
 	{
-		WaitEvent(evUART);
-		ClearEvent(evUART);
+	    /* Display the menu content */
+	    Menu_Display();
+
+	    /* Clear input buffer */
+        memset((char *)g_rx_buffer, 0, BUFF_SIZE);
+
+        /* Get UART input */
+        UART_AsyncReceive(20, g_rx_buffer, &UART_RxComplete);
+
+        /* Wait for event */
+		if (E_OK == WaitEvent(evUART))
+        {
+            /* Get event */
+            GetEvent(TaskMenu, &Event);
+            ClearEvent(evUART);
+
+            /* Check incoming event and process */
+            if (evUART & Event)
+            {
+                switch (g_rx_buffer[0])
+                {
+                    case '0':
+                        /* Return to display menu */
+                    break;
+                    case '1':
+                        Process_Item((uint32_t)(g_rx_buffer[0] - '0'));
+                    break;
+                    case '2':
+                        Process_Item((uint32_t)(g_rx_buffer[0] - '0'));
+                    break;
+                    case '3':
+                        Process_Item((uint32_t)(g_rx_buffer[0] - '0'));
+                    break;
+                    case '4':
+                        Process_Item((uint32_t)(g_rx_buffer[0] - '0'));
+                    break;
+                    default:
+                    break;
+                }
+            }
+        }
+
+
 	}
 	TerminateTask();
 }
@@ -112,9 +180,122 @@ TASK(TaskIdle)
 	}
 }
 
-/* UART Interrupt hander */
+void Menu_Display(void)
+{
+    debug_printf("\r\n--------- UDOO-NEO OSEK DEMO -------\r\n");
+    debug_printf("0: Display Menu\r\n");
+    debug_printf("1: Item 1\r\n");
+    debug_printf("2: Item 2\r\n");
+    debug_printf("3: Item 3\r\n");
+    debug_printf("4: Item 4\r\n");
+}
+
+void Process_Item(uint32_t Item)
+{
+    EventMaskType Event;
+
+    /* Do the item process here */
+    debug_printf("\r\n");
+    debug_printf("Processing item %d...\r\n", Item);
+
+    /* Wait for keyboard input after doing the process */
+    debug_printf("Press any key to exit\r\n");
+
+	/* Clear input buffer */
+    memset((char *)g_rx_buffer, 0, BUFF_SIZE);
+
+    /* Get UART input */
+    UART_AsyncReceive(20, g_rx_buffer, &UART_RxComplete);
+
+    WaitEvent(evUART);
+    GetEvent(TaskMenu, &Event);
+    ClearEvent(evUART);
+}
+
+void UART_SendChar(char c)
+{
+    UART_Putchar(UART5, c);
+    while (!UART_GetStatusFlag(UART5, uartStatusTxComplete));
+}
+
+void UART_SendString(char *str)
+{
+    while(*str != 0)
+    {
+        UART_SendChar(*str);
+        str++;
+    }
+}
+
+void UART_AsyncReceive(uint8_t len, uint8_t * buffer, CallBack_Type CallBack)
+{
+  /* Initialize global variables */
+  if ((g_buffer == NULL) && (len > 0))
+  {
+     g_buffer = buffer;
+     g_len = len;
+     g_rx_count = 0;
+     g_callback = CallBack;
+
+     /* Enable UART RX interrupt */
+     UART_SetIntCmd(UART5, uartIntRxDataReady, true);
+  }
+}
+
+void UART_RxComplete(uint8_t * buffer, uint8_t len)
+{
+	UART_SendString((char *)buffer);
+	/* Send event to TaskMenu */
+	SetEvent(TaskMenu, evUART);
+}
+
 ISR(UART5_Handler)
 {
+    bool ret;
+    char c;
+
+    /* Get the status of RX int flag */
+    ret = UART_GetStatusFlag(UART5, uartStatusRxReady);
+
+    /* Reset the RX int flag */
+    if (ret)
+    {
+        /* Get UART data */
+        c = UART_Getchar(UART5);
+
+        /* Send the Echo */
+        UART_SendChar(c);
+
+        /* Check if we received enough data */
+        if ((g_len > 0) && g_buffer && (g_rx_count < g_len))
+        {
+            if (('\n' != c) && ('\r' != c))
+            {
+                g_buffer[g_rx_count] = c;
+                g_rx_count++;
+            }
+
+            if (('\r' == c) || ('\n' == c) || (g_rx_count >= g_len))
+            {
+                /* Run call back function */
+                if (g_callback != NULL)
+                {
+                    g_callback(g_buffer, g_rx_count);
+                }
+
+                /* Reset global variables */
+                g_buffer = 0;
+                g_rx_count = 0;
+                g_len = 0;
+
+                /* Disable UART RX interrupt */
+                UART_SetIntCmd(UART5, uartIntRxDataReady, false);
+            }
+        }
+
+        /* Clear flag to accept next data */
+        UART_ClearStatusFlag(UART5, uartStatusRxReady);
+    }
 
 }
 
