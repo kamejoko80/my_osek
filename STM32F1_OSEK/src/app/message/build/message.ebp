@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<EmBitz_project_file>
+	<EmBitzVersion release="0.42" revision="0" />
+	<FileVersion major="1" minor="0" />
+	<Project>
+		<Option title="message" />
+		<Option pch_mode="2" />
+		<Option compiler="armgcc_eb" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\EASY_STM32_TFTLCD.elf" />
+				<Option object_output="obj\Debug\" />
+				<Option type="0" />
+				<Option compiler="armgcc_eb" />
+				<Option projectCompilerOptionsRelation="1" />
+				<Option projectAssemblerOptionsRelation="1" />
+				<Option projectLinkerOptionsRelation="1" />
+				<Device>
+					<Add option="$device=cortex-m3" />
+					<Add option="$lscript=../ld/stm32f107rc_flash.ld" />
+					<Add option="$stack=0x0800" />
+					<Add option="$heap=0x0" />
+				</Device>
+				<Compiler>
+					<Add option="-mfloat-abi=soft" />
+					<Add option="-Wall" />
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
+					<Add option="-O0" />
+					<Add option="-g3" />
+					<Add option="-fdata-sections -ffunction-sections -Wl,--gc-sections" />
+					<Add symbol="STM32F10X_CL" />
+					<Add symbol="USE_STDPERIPH_DRIVER" />
+				</Compiler>
+				<Assembler>
+					<Add option="-Wa,--gdwarf-2" />
+				</Assembler>
+				<Linker>
+					<Add option="-eb_lib=n" />
+					<Add option="-eb_start_files" />
+					<Add option="-Wl,--gc-sections" />
+				</Linker>
+				<ExtraCommands>
+					<Add before="rm -rf ../../../../src/os/config" />
+					<Add before="php ../../../../src/os/osek/generator/generator.php --cmdline -l -v -c ../etc/config.oil -f ../../../../src/os/osek/gen/inc/Os_Internal_Cfg.h.php  ../../../../src/os/osek/gen/inc/Os_Cfg.h.php  ../../../../src/os/osek/gen/src/Os_Cfg.c.php ../../../../src/os/osek/gen/src/Os_Internal_Cfg.c.php  ../../../../src/os/osek/gen/src/cortexM4/Os_Internal_Arch_Cfg.c.php ../../../../src/os/osek/gen/inc/cortexM4/Os_Internal_Arch_Cfg.h.php -o ../../../../src/os/config" />
+					<Mode before="0" />
+					<Mode after="0" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\EASY_STM32_TFTLCD.elf" />
+				<Option object_output="obj\Release\" />
+				<Option type="0" />
+				<Option create_hex="1" />
+				<Option compiler="armgcc_eb" />
+				<Option projectDeviceOptionsRelation="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-g2" />
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
+				</Compiler>
+				<Assembler>
+					<Add option="-Wa,--no-warn" />
+				</Assembler>
+				<Linker>
+					<Add option="-Wl,--gc-sections" />
+				</Linker>
+			</Target>
+		</Build>
+		<Device>
+			<Add option="$device=cortex-m3" />
+			<Add option="$stack=0x0800" />
+			<Add option="$heap=0x0000" />
+			<Add option="$lscript=./stm32f107rc_flash.ld" />
+		</Device>
+		<Compiler>
+			<Add option="-mfloat-abi=soft" />
+			<Add option="-fno-strict-aliasing" />
+			<Add symbol="STM32F107RC" />
+			<Add symbol="STM32F10X_CL" />
+			<Add symbol="USE_STDPERIPH_DRIVER" />
+			<Add directory="..\src\inc" />
+			<Add directory="..\src" />
+			<Add directory="..\src\cmsis" />
+			<Add directory="..\src\SPL\inc" />
+			<Add directory="..\src\SPL\src" />
+		</Compiler>
+		<Linker>
+			<Add option="-eb_start_files" />
+			<Add option="-eb_lib=n" />
+		</Linker>
+		<Unit filename="..\..\..\..\doc\README.txt" />
+		<Unit filename="..\etc\config.oil" />
+		<Unit filename="..\ld\stm32f107rc_flash.ld" />
+		<Unit filename="..\main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\board\inc\stdbool.h" />
+		<Unit filename="..\..\..\board\inc\stm32f10x.h" />
+		<Unit filename="..\..\..\board\inc\stm32f10x_conf.h" />
+		<Unit filename="..\..\..\board\inc\system_stm32f10x.h" />
+		<Unit filename="..\..\..\board\src\system_stm32f10x.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\config\inc\cortexM4\Os_Internal_Arch_Cfg.h" />
+		<Unit filename="..\..\..\os\config\inc\Os_Cfg.h" />
+		<Unit filename="..\..\..\os\config\inc\Os_Internal_Cfg.h" />
+		<Unit filename="..\..\..\os\config\src\cortexM4\Os_Internal_Arch_Cfg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\config\src\Os_Cfg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\config\src\Os_Internal_Cfg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\inc\chip.h" />
+		<Unit filename="..\..\..\os\osek\inc\Compiler.h" />
+		<Unit filename="..\..\..\os\osek\inc\cortexM4\Os_Arch.h" />
+		<Unit filename="..\..\..\os\osek\inc\cortexM4\Os_Internal_Arch.h" />
+		<Unit filename="..\..\..\os\osek\inc\cortexM4\StartOs_Arch_SysTick.h" />
+		<Unit filename="..\..\..\os\osek\inc\cortexM4\stm32f4\Os_Internal_Arch_Cpu.h" />
+		<Unit filename="..\..\..\os\osek\inc\os.h" />
+		<Unit filename="..\..\..\os\osek\inc\Os_Internal.h" />
+		<Unit filename="..\..\..\os\osek\inc\Types.h" />
+		<Unit filename="..\..\..\os\osek\inc\Types_Arch.h" />
+		<Unit filename="..\..\..\os\osek\src\ActivateTask.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\CancelAlarm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\ChainTask.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\ClearEvent.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\cortexM4\Os_Arch.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\cortexM4\Os_Internal_Arch.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\cortexM4\PendSV.S">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\cortexM4\StartOs_Arch.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\cortexM4\StartOs_Arch_SysTick.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\GetActiveApplicationMode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\GetAlarm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\GetAlarmBase.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\GetEvent.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\GetResource.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\GetTaskID.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\GetTaskState.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\Os.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\Os_Internal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\ReleaseResource.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\Schedule.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\SetAbsAlarm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\SetEvent.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\SetRelAlarm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\ShutdownOS.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\StartOS.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\TerminateTask.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\os\osek\src\WaitEvent.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\cmsis\core_cm3.h" />
+		<Unit filename="..\..\..\platform\cmsis\core_cmFunc.h" />
+		<Unit filename="..\..\..\platform\cmsis\core_cmInstr.h" />
+		<Unit filename="..\..\..\platform\drivers\inc\GPIO_STM32F10x.h" />
+		<Unit filename="..\..\..\platform\drivers\inc\uart.h" />
+		<Unit filename="..\..\..\platform\drivers\inc\uart_debug.h" />
+		<Unit filename="..\..\..\platform\drivers\src\GPIO_STM32F10x.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\drivers\src\uart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\drivers\src\uart_debug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\inc\misc.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_adc.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_bkp.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_can.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_cec.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_crc.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_dac.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_dbgmcu.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_dma.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_exti.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_flash.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_fsmc.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_gpio.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_i2c.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_iwdg.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_pwr.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_rcc.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_rtc.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_sdio.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_spi.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_tim.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_usart.h" />
+		<Unit filename="..\..\..\platform\SPL\inc\stm32f10x_wwdg.h" />
+		<Unit filename="..\..\..\platform\SPL\src\misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_adc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_bkp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_can.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_cec.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_crc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_dac.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_dbgmcu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_dma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_exti.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_flash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_fsmc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_gpio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_i2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_iwdg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_pwr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_rcc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_rtc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_sdio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_spi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_tim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_usart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\SPL\src\stm32f10x_wwdg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\platform\startup\startup_stm32f10x_cl.S">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\services\inc\fifo.h" />
+		<Unit filename="..\..\..\services\inc\libc.h" />
+		<Unit filename="..\..\..\services\inc\list_head.h" />
+		<Unit filename="..\..\..\services\inc\message.h" />
+		<Unit filename="..\..\..\services\src\fifo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\services\src\libc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\services\src\message.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger>
+				<target_debugging_settings target="Debug" active_interface="OpenOCD">
+					<debug_interface interface_id="OpenOCD" ip_address="localhost" ip_port="3333" path="${EMBITZ}\share\contrib\openocd\bin" executable="openocd.exe" description="" dont_start_server="false" backoff_time="100" options="0" reg_filter="0" active_family="All">
+						<family_options family_id="All">
+							<option opt_id="ID_BOARD_CH" opt_value="" />
+							<option opt_id="ID_INTERFACE_CH" opt_value="" />
+							<option opt_id="ID_TARGET_CH" opt_value="" />
+							<option opt_id="ID_TEXTCTRL1" opt_value="" />
+							<option opt_id="ID_HW_BKP_LIMIT" opt_value="" />
+							<option opt_id="ID_RESET_CH" opt_value="halt" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_ADD_COMMANDS" opt_value="" />
+							<option opt_id="ID_ADD_CMNDS" opt_value="-f interface/cmsis-dap.cfg -f target/stm32f1x.cfg" />
+						</family_options>
+					</debug_interface>
+					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBITZ}\share\contrib" executable="STLinkGDB.exe" description="" dont_start_server="false" backoff_time="1000" options="0" reg_filter="0" active_family="STMicroelectronics">
+						<family_options family_id="STMicroelectronics">
+							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
+							<option opt_id="ID_VECTOR_START" opt_value="0x08000000" />
+							<option opt_id="ID_RESET_TYPE" opt_value="System" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_RAM_EXEC" opt_value="0" />
+							<option opt_id="ID_VEC_TABLE" opt_value="1" />
+							<option opt_id="ID_DONT_CONN_RESET" opt_value="0" />
+							<option opt_id="ID_ALL_MODE_DEBUG" opt_value="0" />
+							<option opt_id="ID_DEV_ADDR" opt_value="" />
+							<option opt_id="ID_VERBOSE_LEVEL" opt_value="3" />
+						</family_options>
+					</debug_interface>
+				</target_debugging_settings>
+				<target_debugging_settings target="Release" active_interface="ST-link">
+					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBITZ}\share\contrib" executable="STLinkGDB.exe" description="" dont_start_server="false" backoff_time="1000" options="0" reg_filter="0" active_family="STMicroelectronics">
+						<family_options family_id="STMicroelectronics">
+							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
+							<option opt_id="ID_VECTOR_START" opt_value="0x08000000" />
+							<option opt_id="ID_RESET_TYPE" opt_value="System" />
+							<option opt_id="ID_LOAD_PROGRAM" opt_value="1" />
+							<option opt_id="ID_SEMIHOST_CHECK" opt_value="0" />
+							<option opt_id="ID_RAM_EXEC" opt_value="0" />
+							<option opt_id="ID_VEC_TABLE" opt_value="1" />
+							<option opt_id="ID_DONT_CONN_RESET" opt_value="0" />
+							<option opt_id="ID_ALL_MODE_DEBUG" opt_value="0" />
+							<option opt_id="ID_DEV_ADDR" opt_value="" />
+							<option opt_id="ID_VERBOSE_LEVEL" opt_value="3" />
+						</family_options>
+					</debug_interface>
+				</target_debugging_settings>
+			</debugger>
+			<envvars />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</EmBitz_project_file>

@@ -1,0 +1,75 @@
+OSEK OSEK {
+
+OS	ExampleOS {
+    STATUS = EXTENDED;
+    ERRORHOOK = TRUE;
+    PRETASKHOOK = FALSE;
+	POSTTASKHOOK = FALSE;
+	STARTUPHOOK = FALSE;
+	SHUTDOWNHOOK = FALSE;
+	USERESSCHEDULER = FALSE;
+	MEMMAP = FALSE;
+};
+
+APPMODE = AppMode1;
+
+EVENT = evBlink;
+
+TASK TaskInit {
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+    }
+    STACK = 512;
+    TYPE = BASIC;
+    SCHEDULE = NON;
+}
+
+TASK TaskBlink {
+    PRIORITY = 5;
+    ACTIVATION = 1;
+    STACK = 512;
+    TYPE = EXTENDED;
+    SCHEDULE = FULL;
+    EVENT = evBlink;
+}
+
+TASK TaskPeriodic {
+    PRIORITY = 10;
+    ACTIVATION = 1;
+    STACK = 512;
+    TYPE = BASIC;
+    SCHEDULE = FULL;
+}
+
+TASK TaskBackground {
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    STACK = 512;
+    TYPE = BASIC;
+    SCHEDULE = FULL;
+}
+
+ALARM ActivateTaskPeriodic {
+    COUNTER = HardwareCounter;
+    ACTION = ACTIVATETASK {
+        TASK = TaskPeriodic;
+    }
+}
+
+ALARM AppCallbackAlarm {
+    COUNTER = HardwareCounter;
+    ACTION = ALARMCALLBACK {
+        ALARMCALLBACKNAME = "AppCallback";
+    }
+}
+
+COUNTER HardwareCounter {
+   MAXALLOWEDVALUE = 60000000;
+   TICKSPERBASE = 1;
+   MINCYCLE = 1;
+   TYPE = HARDWARE;
+};
+
+};

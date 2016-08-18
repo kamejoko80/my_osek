@@ -1,0 +1,74 @@
+OSEK OSEK {
+
+OS	ExampleOS {
+    STATUS = EXTENDED;
+    ERRORHOOK = TRUE;
+    PRETASKHOOK = FALSE;
+	POSTTASKHOOK = FALSE;
+	STARTUPHOOK = FALSE;
+	SHUTDOWNHOOK = FALSE;
+	USERESSCHEDULER = FALSE;
+	MEMMAP = FALSE;
+};
+
+APPMODE = AppMode1;
+
+EVENT = evMessage {
+    MASK = AUTO;
+};
+
+EVENT = evAlarmSend {
+    MASK = AUTO;
+};
+
+TASK TaskReceive {
+    PRIORITY = 3;
+    ACTIVATION = 1;
+    AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+    }
+    STACK = 512;
+    TYPE = EXTENDED;
+    SCHEDULE = FULL;
+    EVENT = evMessage;
+}
+
+TASK TaskSend {
+    PRIORITY = 2;
+    ACTIVATION = 1;
+    AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+    }
+    STACK = 512;
+    TYPE = EXTENDED;
+    SCHEDULE = FULL;
+    EVENT = evAlarmSend;
+}
+
+TASK TaskIdle {
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+    }
+    STACK = 512;
+    TYPE = EXTENDED;
+    SCHEDULE = FULL;
+}
+
+ALARM AlarmSend {
+    COUNTER = HardwareCounter;
+    ACTION = SETEVENT {
+      TASK = TaskSend;
+      EVENT = evAlarmSend;
+    };
+}
+
+COUNTER HardwareCounter {
+   MAXALLOWEDVALUE = 60000000;
+   TICKSPERBASE = 1;
+   MINCYCLE = 1;
+   TYPE = HARDWARE;
+};
+
+};
