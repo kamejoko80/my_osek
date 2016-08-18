@@ -1,20 +1,28 @@
-# FreeOSEK STM32F4
+# FreeOSEK For ARM Cortex-M
 
-FreeOSEK implementation for STM32F4 Discovery
+FreeOSEK implementation for ARM Cortex-M
 
-Build instruction
+1. FRDM_KL46Z_BARE_METAL
 
-1> Download EmBlocks IDE as bellow link :
-    
-   http://www.emblocks.org/web/
+   - GNU GCC bare metal project for NXP FRDM-KL46Z development kit 
 
-2> Use PHP with windows 7 (64 bit):
+2. FRDM_KL46Z_OSEK
 
-   - Unzip php-5.6.20-nts-Win32-VC11-x64.zip 
-   - Create new folder C:\php and copy all decompressed files to this folder.
-   - Add C:\php into PATH environment variable.
-   - Install vc_redist.x64.exe if we can't run command php -v
+   - FreeOSEK with NXP ARM Cortex-M0+ (FRDM-KL46Z)
 
-3> Open project with Emblocks IDE, press F7 to build source files.
+3. NEO_M4_BARE_METAL
+   
+   - GNU GCC bare metal project for UDOO-NEO development kit
 
- 
+4. NEO_M4_OSEK
+
+   - FreeOSEK with NXP ARM Cortex-M4 (i.MX6SX)
+   
+5. STM32F1_OSEK
+
+   - FreeOSEK with ST ARM Cortex-M3 (EASY_STM32 STM32F107 STAMP BOARD)   
+
+6. STM32F4_OSEK
+   
+   - FreeOSEK with ST ARM Cortex-M4 (STM32F4 Discovery)
+   
