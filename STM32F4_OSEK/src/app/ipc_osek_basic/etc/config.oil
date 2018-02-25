@@ -1,0 +1,59 @@
+OSEK OSEK {
+
+OS	ExampleOS {
+    STATUS = EXTENDED;
+    ERRORHOOK = TRUE;
+    PRETASKHOOK = FALSE;
+	POSTTASKHOOK = FALSE;
+	STARTUPHOOK = FALSE;
+	SHUTDOWNHOOK = FALSE;
+	USERESSCHEDULER = FALSE;
+	MEMMAP = FALSE;
+};
+
+APPMODE = AppMode1;
+
+TASK TaskIPC {
+    PRIORITY = 7;
+    ACTIVATION = 1;
+    AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+    }
+    STACK = 512;
+    TYPE = EXTENDED;
+    SCHEDULE = FULL;
+}
+
+TASK TaskIdle {
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+    }
+    STACK = 512;
+    TYPE = EXTENDED;
+    SCHEDULE = FULL;
+}
+
+ISR EXTI0_Handler {
+    CATEGORY  = 2;
+    PRIORITY  = 1;
+	INTERRUPT = EXTI0;
+    STACKSIZE = 512;
+};
+
+ISR DMA2_Stream2_Handler {
+    CATEGORY  = 2;
+    PRIORITY  = 1;
+	INTERRUPT = DMA2_Stream2;
+    STACKSIZE = 512;
+};
+
+COUNTER HardwareCounter {
+   MAXALLOWEDVALUE = 60000000;
+   TICKSPERBASE = 1;
+   MINCYCLE = 1;
+   TYPE = HARDWARE;
+};
+
+};

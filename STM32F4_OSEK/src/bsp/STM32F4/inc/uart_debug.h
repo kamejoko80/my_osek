@@ -25,5 +25,6 @@
   */
 
 void uart_debug_init(void);
-void LogicAnalyzerTirggerConfig(void);
-void LogicAnalyzerTirgger(uint8_t t);
+unsigned char SendChar (unsigned char ch);
+unsigned char GetKey (void);
+

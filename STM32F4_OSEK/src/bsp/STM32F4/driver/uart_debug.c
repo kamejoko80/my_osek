@@ -133,6 +133,7 @@ unsigned char GetKey (void)  {
   {}
 
   ret = USART_ReceiveData(USART2);
+  SendChar(ret);
 
   return ret;
 }
