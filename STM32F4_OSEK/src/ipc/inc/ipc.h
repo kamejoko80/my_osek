@@ -17,11 +17,12 @@
 #include <string.h>
 #include <stdbool.h>
 #include "spi.h"
+#include "fifo.h"
 
 #define IPC_TRANSFER_LEN (256)
-#define FIFO_BUF_SIZE    (IPC_TRANSFER_LEN * 10)
+#define FIFO_BUF_SIZE    (IPC_TRANSFER_LEN * 100)
 
-//#define SPI_MASTER
+#define SPI_MASTER
 
 /**
  * @brief         IPC_Init
@@ -32,6 +33,24 @@
 void IPC_Init(void);
 
 /**
+ * @brief         IPC_InitStatus
+ * @param[in]     None
+ * @param[in,out] None
+ * @return        bool IPC initialization status
+ */
+bool IPC_InitStatus(void);
+
+/**
+ * @brief         IPC_GetRxFiFo
+ * @param[in]     None
+ * @param[in,out] None
+ * @return        Fifo_t * Pointer of Rx FIFO object
+ */
+Fifo_t *IPC_GetRxFiFo(void);
+
+#ifdef SPI_MASTER
+
+/**
  * @brief         IPC_MasterTransferRequest
  * @param[in]     uint8_t *TxBuffer
  * @param[in]     uint32_t Len
@@ -39,6 +58,8 @@ void IPC_Init(void);
  * @return        void
  */
 void IPC_MasterTransferRequest(uint8_t *TxBuffer, uint16_t Len);
+
+#else
 
 /**
  * @brief         IPC_SlaverTransferRequest
@@ -49,4 +70,7 @@ void IPC_MasterTransferRequest(uint8_t *TxBuffer, uint16_t Len);
  */
 void IPC_SlaverTransferRequest(uint8_t *TxBuffer, uint16_t Len);
 
+#endif
+
 #endif /* __IPC_H__ */
+

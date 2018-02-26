@@ -27,6 +27,12 @@
  *       SCK  (PA5)  ------>  SCK  (PA5)
  *       MISO (PA6)  <------  MISO (PA6)
  *       MOSI (PA7)  ------>  MOSI (PA7)
+ *
+ * GPIO Signaling :
+ *
+ *       Request In             Request Out
+ * Master (Input, EXTI)       Slaver (Output)
+ *          PA0     <------        PA1
  */
 
 /***************************************************************
@@ -174,7 +180,7 @@ void SPI_Config(bool Master)
   SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
 
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
@@ -232,14 +238,14 @@ void SPI_Config(bool Master)
 
   SPI_Init(SPI1, &SPI_InitStructure);
 
-#if 0
-  /* Request output configuration */
-  SPI_RequestOutConfig();
-  SPI_RequestOutSetValue(true);
-
+#ifdef SPI_MASTER
   /* Request input configuration */
   SPI_RequestInConfig();
-  SPI_RequestInExtiConfig(true);
+  // SPI_RequestInExtiConfig(true);
+#else
+  /* Request output configuration */
+  SPI_RequestOutConfig();
+  SPI_RequestOutSetValue(false);
 #endif
 
 }
@@ -346,3 +352,4 @@ ISR (EXTI0_Handler)
     EXTI_ClearITPendingBit(EXTI_Line0);
   }
 }
+

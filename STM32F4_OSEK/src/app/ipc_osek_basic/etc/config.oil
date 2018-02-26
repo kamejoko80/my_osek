@@ -13,8 +13,29 @@ OS	ExampleOS {
 
 APPMODE = AppMode1;
 
+/* IPC usaged events */
+EVENT = evAlarmIPCMasterTransmit;
+EVENT = evSlaverDataReceived;
+EVENT = evMasterDataReceived;
+
+/* IPC usage task */
 TASK TaskIPC {
     PRIORITY = 7;
+    ACTIVATION = 1;
+    AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+    }
+    STACK = 512;
+    TYPE = EXTENDED;
+    SCHEDULE = FULL;
+    EVENT = evSlaverDataReceived;
+    EVENT = evMasterDataReceived;
+    EVENT = evAlarmIPCMasterTransmit;
+}
+
+/* Demo application usage task */
+TASK TaskDemo {
+    PRIORITY = 2;
     ACTIVATION = 1;
     AUTOSTART = TRUE {
         APPMODE = AppMode1;
@@ -33,6 +54,15 @@ TASK TaskIdle {
     STACK = 512;
     TYPE = EXTENDED;
     SCHEDULE = FULL;
+}
+
+/* IPC Master transfer periodic alarm */
+ALARM AlarmIPCMasterTransmit {
+    COUNTER = HardwareCounter;
+    ACTION = SETEVENT {
+      TASK = TaskIPC;
+      EVENT = evAlarmIPCMasterTransmit;
+    };
 }
 
 ISR EXTI0_Handler {

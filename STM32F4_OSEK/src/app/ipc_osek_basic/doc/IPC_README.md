@@ -1,7 +1,7 @@
 IPC communication Bus
 
 IPC is based on SPI bus and DMA transfer mechanism,
-with just only 3 signals we can create a robust and high band width
+with just only 4 signals we can create a robust and high band width
 communication link between the ICs. It's useful for systems which
 consist embedded Linux and real time processing (RTOS) or for IoT
 devices need to expand IO control lines.
@@ -28,4 +28,9 @@ source code again.
  *       MISO (PA6)  <------  MISO (PA6)
  *       MOSI (PA7)  ------>  MOSI (PA7)
  *
+ * GPIO Signaling :
+ *
+ *       Request In             Request Out
+ * Master (Input, EXTI)       Slaver (Output)
+ *          PA0     <------        PA1
  */
