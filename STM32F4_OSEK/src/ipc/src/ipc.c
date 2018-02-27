@@ -69,27 +69,6 @@ static Fifo_t g_RxFifo;
 /***************************************************************
  *  FUNCTION DEFINITION
  ***************************************************************/
-
-void Delay(uint32_t m)
-{
-    uint32_t i, j;
-
-    for (i = 0; i < m; i++)
-       for(j = 0; j < 10000; j++);
-}
-
-void PrintBuffer(uint8_t *RxBuffer, uint32_t Len)
-{
-    int i;
-
-    for(i = 0; i < IPC_TRANSFER_LEN; i++)
-    {
-        printf("%c", RxBuffer[i]);
-    }
-
-    printf("\r\n");
-}
-
 void IPC_Init(void)
 {
     /* FIFO initialization */
@@ -109,11 +88,6 @@ void IPC_Init(void)
 bool IPC_InitStatus(void)
 {
     return g_IsIPCInit;
-}
-
-Fifo_t *IPC_GetRxFiFo(void)
-{
-    return &g_RxFifo;
 }
 
 static bool IPC_FrameCheck(uint8_t *Buff, uint16_t Len)
@@ -204,23 +178,21 @@ static void IPC_ManageIPCMasterTransmit(EventMaskType eventMask)
     }
 }
 
+void __attribute__((weak)) IPC_MasterDataRxHandler(Fifo_t *Fifo)
+{
+    /* Pops data to free Rx FIFO buffer */
+    FifoPopMulti(Fifo, g_TmpBuff, IPC_TRANSFER_LEN);
+}
+
 static void IPC_ManageMasterDataReceived(EventMaskType eventMask)
 {
-    Fifo_t *Fifo;
-
     if (eventMask & evMasterDataReceived)
     {
-        /* Get Rx FIFO object */
-        Fifo = IPC_GetRxFiFo();
+        /* Execute data received handler */
+        IPC_MasterDataRxHandler(&g_RxFifo);
 
-        /* Try to use the data to free the Rx FIFO buffer */
-        if(Fifo != NULL)
-        {
-            FifoPopMulti(Fifo, g_TmpBuff, IPC_TRANSFER_LEN);
-            PrintBuffer(g_TmpBuff, IPC_TRANSFER_LEN);
-        }
-
-         STM_EVAL_LEDToggle(LED3);
+        /* Toggles debug LED */
+        STM_EVAL_LEDToggle(LED3);
 
         /* Clear the event */
         ClearEvent(evMasterDataReceived);
@@ -289,22 +261,20 @@ void IPC_SlaverTransferRequest(uint8_t *Buff, uint16_t Len)
 
 }
 
+void __attribute__((weak)) IPC_SlaverDataRxHandler(Fifo_t *Fifo)
+{
+    /* Pops data to free Rx FIFO buffer */
+    FifoPopMulti(Fifo, g_TmpBuff, IPC_TRANSFER_LEN);
+}
+
 static void IPC_ManageSlaverDataReceived(EventMaskType eventMask)
 {
-    Fifo_t *Fifo;
-
     if (eventMask & evSlaverDataReceived)
     {
-        /* Get Rx FIFO object */
-        Fifo = IPC_GetRxFiFo();
+        /* Execute data received handler */
+        IPC_SlaverDataRxHandler(&g_RxFifo);
 
-        /* Try to use the data to free the Rx FIFO buffer */
-        if(Fifo != NULL)
-        {
-            FifoPopMulti(Fifo, g_TmpBuff, IPC_TRANSFER_LEN);
-            PrintBuffer(g_TmpBuff, IPC_TRANSFER_LEN);
-        }
-
+        /* Toggles debug LED */
         STM_EVAL_LEDToggle(LED3);
 
         /* Clear the event */

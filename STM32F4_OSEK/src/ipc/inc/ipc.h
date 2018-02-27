@@ -40,14 +40,6 @@ void IPC_Init(void);
  */
 bool IPC_InitStatus(void);
 
-/**
- * @brief         IPC_GetRxFiFo
- * @param[in]     None
- * @param[in,out] None
- * @return        Fifo_t * Pointer of Rx FIFO object
- */
-Fifo_t *IPC_GetRxFiFo(void);
-
 #ifdef SPI_MASTER
 
 /**

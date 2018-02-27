@@ -20,6 +20,26 @@
 #include "fifo.h"
 
 char str[IPC_TRANSFER_LEN] = {0};
+uint8_t Buff[IPC_TRANSFER_LEN] = {0};
+
+/**
+ * @brief         PrintBuffer
+ * @param[in]     uint8_t *RxBuffer
+ * @param[in]     uint32_t Len
+ * @param[in,out] char *str
+ * @return        void
+ */
+void PrintBuffer(uint8_t *RxBuffer, uint32_t Len)
+{
+    int i;
+
+    for(i = 0; i < IPC_TRANSFER_LEN; i++)
+    {
+        printf("%c", RxBuffer[i]);
+    }
+
+    printf("\r\n");
+}
 
 /**
  * @brief         get_string
@@ -40,6 +60,20 @@ void get_string(char *str)
       }
       *str++ = c;
    }
+}
+
+void IPC_MasterDataRxHandler(Fifo_t *Fifo)
+{
+    /* Fetch data from FIFO buffer */
+    FifoPopMulti(Fifo, Buff, IPC_TRANSFER_LEN);
+    PrintBuffer(Buff, IPC_TRANSFER_LEN);
+}
+
+void IPC_SlaverDataRxHandler(Fifo_t *Fifo)
+{
+    /* Fetch data from FIFO buffer */
+    FifoPopMulti(Fifo, Buff, IPC_TRANSFER_LEN);
+    PrintBuffer(Buff, IPC_TRANSFER_LEN);
 }
 
 /**
