@@ -1,14 +1,10 @@
-IPC communication Bus
+IPC COMUNICATION STACK
 
 IPC is based on SPI bus and DMA transfer mechanism,
 with just only 4 signals we can create a robust and high band width
 communication link between the ICs. It's useful for systems which
 consist embedded Linux and real time processing (RTOS) or for IoT
 devices need to expand IO control lines.
-
-The project is firstly implemented on STM32F4 discovery as Ping Pong
-application demo. We need 2 boards STM32F4 discovery to connect together,
-one acts as a SPI master device and the other one acts as a slaver device.
 
 To enable master device, we've defined the following macro in ipc.h
 
@@ -30,7 +26,7 @@ source code again.
  *
  * GPIO Signaling :
  *
- *       Request In             Request Out
- * Master (Input, EXTI)       Slaver (Output)
+ *     Slaver ready in        Slaver ready out
+ *     Master (Input)         Slaver (Output)
  *          PA0     <------        PA1
  */
