@@ -18,9 +18,7 @@
 #include <stdbool.h>
 #include "spi.h"
 #include "fifo.h"
-
-#define IPC_TRANSFER_LEN (256)
-#define FIFO_BUF_SIZE    (IPC_TRANSFER_LEN * 100)
+#include "frame.h"
 
 #define SPI_MASTER
 
@@ -40,29 +38,14 @@ void IPC_Init(void);
  */
 bool IPC_InitStatus(void);
 
-#ifdef SPI_MASTER
-
 /**
- * @brief         IPC_MasterTransferRequest
- * @param[in]     uint8_t *TxBuffer
+ * @brief         IPC send data request
+ * @param[in]     uint8_t *Data
  * @param[in]     uint32_t Len
  * @param[in,out] None
  * @return        void
  */
-void IPC_MasterTransferRequest(uint8_t *TxBuffer, uint16_t Len);
-
-#else
-
-/**
- * @brief         IPC_SlaverTransferRequest
- * @param[in]     uint8_t *TxBuffer
- * @param[in]     uint32_t Len
- * @param[in,out] None
- * @return        void
- */
-void IPC_SlaverTransferRequest(uint8_t *TxBuffer, uint16_t Len);
-
-#endif
+void IPC_Send(uint8_t *Data, uint16_t Len);
 
 #endif /* __IPC_H__ */
 

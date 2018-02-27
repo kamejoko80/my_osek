@@ -62,18 +62,13 @@ void get_string(char *str)
    }
 }
 
-void IPC_MasterDataRxHandler(Fifo_t *Fifo)
+void IPC_DataRxHandler(Fifo_t *Fifo)
 {
-    /* Fetch data from FIFO buffer */
-    FifoPopMulti(Fifo, Buff, IPC_TRANSFER_LEN);
-    PrintBuffer(Buff, IPC_TRANSFER_LEN);
-}
+    IPC_Frame_t *Frame = (IPC_Frame_t *)Buff;
 
-void IPC_SlaverDataRxHandler(Fifo_t *Fifo)
-{
     /* Fetch data from FIFO buffer */
     FifoPopMulti(Fifo, Buff, IPC_TRANSFER_LEN);
-    PrintBuffer(Buff, IPC_TRANSFER_LEN);
+    PrintBuffer(Frame->Data, IPC_TRANSFER_LEN);
 }
 
 /**
@@ -141,17 +136,10 @@ TASK(TaskDemo)
 
     while(1)
     {
-        #ifdef SPI_MASTER
-            memset(str, 0, IPC_TRANSFER_LEN);
-            get_string(str);
-            printf("%s\r\n", str);
-            IPC_MasterTransferRequest((uint8_t *)str, IPC_TRANSFER_LEN);
-        #else
-            memset(str, 0, IPC_TRANSFER_LEN);
-            get_string(str);
-            printf("%s\r\n", str);
-            IPC_SlaverTransferRequest((uint8_t *)str, IPC_TRANSFER_LEN);
-        #endif
+        memset(str, 0, IPC_TRANSFER_LEN);
+        get_string(str);
+        printf("%s\r\n", str);
+        IPC_Send((uint8_t *)str, strlen(str));
 
         STM_EVAL_LEDToggle(LED4);
     }

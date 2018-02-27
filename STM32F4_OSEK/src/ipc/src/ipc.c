@@ -14,7 +14,6 @@
 #include <stdbool.h>
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
-
 #include "ipc.h"
 #include "os.h"
 
@@ -57,14 +56,16 @@ static Fifo_t g_RxFifo;
 /***************************************************************
  *  EXTERNAL FUNCTION PROTOYPE
  ***************************************************************/
+extern bool IPC_Frame_Create(IPC_Frame_t *Frame, uint8_t *Data, uint16_t Len);
+extern bool IPC_Frame_Check(IPC_Frame_t *Frame);
+extern void IPC_Frame_Print(IPC_Frame_t *Frame);
+
 /***************************************************************
  *  FUNCTION PROTOYPE
  ***************************************************************/
-#ifdef SPI_MASTER
-    static void IPC_MasterTransferQueue(void);
-#else
-    static void IPC_SlaverTransferQueue(void);
-#endif
+static void IPC_SPITransferQueue(void);
+static void IPC_ManageDataReceived(EventMaskType eventMask);
+void IPC_TransferCompleted(void);
 
 /***************************************************************
  *  FUNCTION DEFINITION
@@ -79,7 +80,7 @@ void IPC_Init(void)
     SPI_Config(true);
 #else
     SPI_Config(false);
-    IPC_SlaverTransferQueue();
+    IPC_SPITransferQueue();
 #endif
 
     g_IsIPCInit = true;
@@ -90,75 +91,68 @@ bool IPC_InitStatus(void)
     return g_IsIPCInit;
 }
 
-static bool IPC_FrameCheck(uint8_t *Buff, uint16_t Len)
+/*!
+ * Function : SPI transfer request
+ * Context  : Interrupt or TaskIPC
+ */
+static void IPC_SPITransferQueue(void)
 {
-    bool ret = false;
+    /* Master transfer request */
+    SPI_AsyncTransfer(g_TxBuff, g_RxBuff, IPC_TRANSFER_LEN + 1, &IPC_TransferCompleted);
 
-    if(Buff[0] != 0)
-    {
-        ret = true;
-    }
-    else
-    {
-        ret = false;
-    }
-
-    return ret;
+#ifndef SPI_MASTER
+    /* Signals that SPI slaver is free */
+    SPI_RequestOutSetValue(true);
+#endif
 }
 
-#ifdef SPI_MASTER
-
-void IPC_MasterTransferCompleted(void)
+/*!
+ * Function : IPC transfer complete
+ * Context  : Interrupt
+ */
+void IPC_TransferCompleted(void)
 {
-    if (IPC_FrameCheck(g_RxBuff, IPC_TRANSFER_LEN))
+    IPC_Frame_t *Frame = (IPC_Frame_t *)g_RxBuff;
+
+#ifndef SPI_MASTER
+    /* Signals that SPI slaver is busy */
+    SPI_RequestOutSetValue(false);
+#endif
+
+    if (IPC_Frame_Check(Frame))
     {
         /* Pushes data to Rx FIFO buffer */
         FifoPushMulti(&g_RxFifo, g_RxBuff, IPC_TRANSFER_LEN);
 
-        /* Notify Master data received */
-        SetEvent(TaskIPC, evMasterDataReceived);
+        /* Notify data received handler */
+        SetEvent(TaskIPC, evIPCDataReceived);
     }
+
+#ifndef SPI_MASTER
+    /* Reset IPC slaver transmit buffer */
+    memset(g_TxBuff, 0, IPC_TRANSFER_LEN + 1);
+
+    /* Fetch data from Tx FIFO buffer */
+    FifoPopMulti(&g_TxFifo, g_TxBuff, IPC_TRANSFER_LEN);
+
+    /* Slaver transfer request SPI DMA queue */
+    IPC_SPITransferQueue();
+#endif
 }
 
-static void IPC_MasterTransferQueue(void)
-{
-    /* Master transfer request */
-    SPI_AsyncTransfer(g_TxBuff, g_RxBuff, IPC_TRANSFER_LEN + 1, &IPC_MasterTransferCompleted);
-}
-
-void IPC_MasterTransferRequest(uint8_t *Buff, uint16_t Len)
-{
-    uint16_t LenCopy;
-
-    if(FifoGetFreeSize(&g_TxFifo) >= IPC_TRANSFER_LEN)
-    {
-        /* Length copy should be limited */
-        if (Len < IPC_TRANSFER_LEN)
-        {
-            LenCopy = Len;
-        }
-        else
-        {
-            LenCopy = IPC_TRANSFER_LEN;
-        }
-
-        /* Copy data */
-        memset(g_TmpBuff, 0, IPC_TRANSFER_LEN);
-        memcpy(g_TmpBuff, Buff, LenCopy);
-
-        /* Store data into Tx Fifo buffer */
-        FifoPushMulti(&g_TxFifo, g_TmpBuff, IPC_TRANSFER_LEN);
-    }
-}
-
-static void IPC_ManageIPCMasterTransmit(EventMaskType eventMask)
+#ifdef SPI_MASTER
+/*!
+ * Function : Manage periodic SPI master transfer request
+ * Context  : TaskIPC
+ */
+static void IPC_ManageSPIMasterTransmit(EventMaskType eventMask)
 {
     /*
      * No matter what Tx FIFO buffer empty or not
      * master should request SPI DMA transfer to
      * poll the received data from slaver
      */
-    if (eventMask & evAlarmIPCMasterTransmit)
+    if (eventMask & evAlarmSPIMasterTransmit)
     {
         /* Check if SPI slaver is free */
         if(SPI_RequestInGetStatus())
@@ -170,120 +164,65 @@ static void IPC_ManageIPCMasterTransmit(EventMaskType eventMask)
             FifoPopMulti(&g_TxFifo, g_TxBuff, IPC_TRANSFER_LEN);
 
             /* Master transfer request SPI DMA queue */
-            IPC_MasterTransferQueue();
+            IPC_SPITransferQueue();
         }
 
         /* Clear the event */
-        ClearEvent(evAlarmIPCMasterTransmit);
+        ClearEvent(evAlarmSPIMasterTransmit);
     }
 }
+#endif
 
-void __attribute__((weak)) IPC_MasterDataRxHandler(Fifo_t *Fifo)
+/*!
+ * Function : IPC data received handler
+ * Context  : TaskIPC
+ */
+void __attribute__((weak)) IPC_DataRxHandler(Fifo_t *Fifo)
 {
     /* Pops data to free Rx FIFO buffer */
     FifoPopMulti(Fifo, g_TmpBuff, IPC_TRANSFER_LEN);
 }
 
-static void IPC_ManageMasterDataReceived(EventMaskType eventMask)
+/*!
+ * Function : Menage IPC data received event
+ * Context  : TaskIPC
+ */
+static void IPC_ManageDataReceived(EventMaskType eventMask)
 {
-    if (eventMask & evMasterDataReceived)
+    if (eventMask & evIPCDataReceived)
     {
         /* Execute data received handler */
-        IPC_MasterDataRxHandler(&g_RxFifo);
+        IPC_DataRxHandler(&g_RxFifo);
 
         /* Toggles debug LED */
         STM_EVAL_LEDToggle(LED3);
 
         /* Clear the event */
-        ClearEvent(evMasterDataReceived);
+        ClearEvent(evIPCDataReceived);
     }
 }
 
-#else /* SPI_MASTER */
-
-void IPC_SlaverTransferCompleted(void)
+/*!
+ * Function : IPC data transfer request
+ * Context  : Any
+ */
+void IPC_Send(uint8_t *Data, uint16_t Len)
 {
-    /* Signals that SPI slaver is busy */
-    SPI_RequestOutSetValue(false);
-
-    if (IPC_FrameCheck(g_RxBuff, IPC_TRANSFER_LEN))
-    {
-        /* Pushes data to Rx FIFO buffer */
-        FifoPushMulti(&g_RxFifo, g_RxBuff, IPC_TRANSFER_LEN);
-
-        /* Notify Slaver data received */
-        SetEvent(TaskIPC, evSlaverDataReceived);
-    }
-
-    /* Reset IPC transmit buffer */
-    memset(g_TxBuff, 0, IPC_TRANSFER_LEN + 1);
-
-    /* Fetch data from Tx FIFO buffer */
-    FifoPopMulti(&g_TxFifo, g_TxBuff, IPC_TRANSFER_LEN);
-
-    /* Slaver transfer request SPI DMA queue */
-    IPC_SlaverTransferQueue();
-
-}
-
-static void IPC_SlaverTransferQueue(void)
-{
-    /* Master transfer request */
-    SPI_AsyncTransfer(g_TxBuff, g_RxBuff, IPC_TRANSFER_LEN + 1, &IPC_SlaverTransferCompleted);
-
-    /* Signals that SPI slaver is free */
-    SPI_RequestOutSetValue(true);
-}
-
-void IPC_SlaverTransferRequest(uint8_t *Buff, uint16_t Len)
-{
-    uint16_t LenCopy;
+    IPC_Frame_t *Frame = (IPC_Frame_t *)g_TmpBuff;
 
     if(FifoGetFreeSize(&g_TxFifo) >= IPC_TRANSFER_LEN)
     {
-        /* Length copy should be limited */
-        if (Len < IPC_TRANSFER_LEN)
+        if(IPC_Frame_Create(Frame, Data, Len))
         {
-            LenCopy = Len;
+            FifoPushMulti(&g_TxFifo, (uint8_t *)Frame, IPC_TRANSFER_LEN);
         }
-        else
-        {
-            LenCopy = IPC_TRANSFER_LEN;
-        }
-
-        /* Copy data */
-        memset(g_TmpBuff, 0, IPC_TRANSFER_LEN);
-        memcpy(g_TmpBuff, Buff, LenCopy);
-
-        /* Store data into Tx Fifo buffer */
-        FifoPushMulti(&g_TxFifo, g_TmpBuff, IPC_TRANSFER_LEN);
-    }
-
-}
-
-void __attribute__((weak)) IPC_SlaverDataRxHandler(Fifo_t *Fifo)
-{
-    /* Pops data to free Rx FIFO buffer */
-    FifoPopMulti(Fifo, g_TmpBuff, IPC_TRANSFER_LEN);
-}
-
-static void IPC_ManageSlaverDataReceived(EventMaskType eventMask)
-{
-    if (eventMask & evSlaverDataReceived)
-    {
-        /* Execute data received handler */
-        IPC_SlaverDataRxHandler(&g_RxFifo);
-
-        /* Toggles debug LED */
-        STM_EVAL_LEDToggle(LED3);
-
-        /* Clear the event */
-        ClearEvent(evSlaverDataReceived);
     }
 }
 
-#endif /* SPI_MASTER */
-
+/*!
+ * Function : IPC task function
+ * Context  : TaskIPC
+ */
 TASK(TaskIPC)
 {
     EventMaskType waitEventMask = 0;
@@ -295,13 +234,12 @@ TASK(TaskIPC)
     IPC_Init();
 
     /* Initialize wait events */
-    waitEventMask |= evAlarmIPCMasterTransmit |
-                     evMasterDataReceived |
-                     evSlaverDataReceived;
+    waitEventMask |= evAlarmSPIMasterTransmit |
+                     evIPCDataReceived;
 
 #ifdef SPI_MASTER
     /* Start IPC master transfer periodic alarm */
-    SetRelAlarm(AlarmIPCMasterTransmit, 10, IPC_MASTER_TRANSMIT_INTERVAL);
+    SetRelAlarm(AlarmSPIMasterTransmit, 10, IPC_MASTER_TRANSMIT_INTERVAL);
 #endif
 
     /* TaskIPC main loop */
@@ -316,15 +254,12 @@ TASK(TaskIPC)
             /* Check event and do the corresponding process */
             if (E_OK == GetEvent(TaskIPC, &eventMask))
             {
-                #ifdef SPI_MASTER
-                    /* Master transfer request complete */
-                    IPC_ManageMasterDataReceived(eventMask);
+                    /* IPC transfer request complete */
+                    IPC_ManageDataReceived(eventMask);
 
+                #ifdef SPI_MASTER
                     /* Master transfer SPI DMA queue */
-                    IPC_ManageIPCMasterTransmit(eventMask);
-                #else
-                    /* Slaver data received event */
-                    IPC_ManageSlaverDataReceived(eventMask);
+                    IPC_ManageSPIMasterTransmit(eventMask);
                 #endif
 
                 STM_EVAL_LEDToggle(LED5);
