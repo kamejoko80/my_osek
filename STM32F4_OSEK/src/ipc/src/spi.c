@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) : 2016
  *  File name     : spi.c
- *	Author        : Dang Minh Phuong
+ *  Author        : Dang Minh Phuong
  *  Email         : kamejoko80@yahoo.com
  *
  *  This program is free software, you can redistribute it and/or modify
@@ -30,9 +30,14 @@
  *
  * GPIO Signaling :
  *
- *       Request In             Request Out
- * Master (Input, EXTI)       Slaver (Output)
+ *     Ext IRQ                Slaver request out
+ *     Master (Input)         Slaver (Output)
  *          PA0     <------        PA1
+ *
+ *     Master request out     Ext IRQ
+ *     Master (Output)        Slaver (Input)
+ *          PA1     ------>        PA0
+ *
  */
 
 /***************************************************************
@@ -238,16 +243,13 @@ void SPI_Config(bool Master)
 
   SPI_Init(SPI1, &SPI_InitStructure);
 
-#ifdef SPI_MASTER
-  /* Request input configuration */
-  SPI_RequestInConfig();
-  // SPI_RequestInExtiConfig(true);
-#else
   /* Request output configuration */
   SPI_RequestOutConfig();
-  SPI_RequestOutSetValue(false);
-#endif
+  SPI_RequestOutSetValue(true);
 
+  /* Request input configuration */
+  SPI_RequestInConfig();
+  SPI_RequestInExtiConfig(true);
 }
 
 void SPI_ConfigTransfer(uint8_t *TxBuffer, uint8_t *RxBuffer, uint32_t Len)
@@ -348,8 +350,11 @@ ISR (EXTI0_Handler)
 {
   if(EXTI_GetITStatus(EXTI_Line0) != RESET)
   {
+
+    extern void IPC_SPITransferQueue(void);
+    IPC_SPITransferQueue();
+
     /* Clear the EXTI line 0 pending bit */
     EXTI_ClearITPendingBit(EXTI_Line0);
   }
 }
-

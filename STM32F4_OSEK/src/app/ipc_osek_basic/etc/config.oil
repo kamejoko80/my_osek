@@ -14,8 +14,8 @@ OS	ExampleOS {
 APPMODE = AppMode1;
 
 /* IPC usaged events */
-EVENT = evAlarmSPIMasterTransmit;
 EVENT = evIPCDataReceived;
+EVENT = evIPCSlaverSendComplete;
 
 /* IPC usage task */
 TASK TaskIPC {
@@ -28,7 +28,7 @@ TASK TaskIPC {
     TYPE = EXTENDED;
     SCHEDULE = FULL;
     EVENT = evIPCDataReceived;
-    EVENT = evAlarmSPIMasterTransmit;
+    EVENT = evIPCSlaverSendComplete;
 }
 
 /* Demo application usage task */
@@ -52,15 +52,6 @@ TASK TaskIdle {
     STACK = 512;
     TYPE = EXTENDED;
     SCHEDULE = FULL;
-}
-
-/* IPC Master transfer periodic alarm */
-ALARM AlarmSPIMasterTransmit {
-    COUNTER = HardwareCounter;
-    ACTION = SETEVENT {
-      TASK = TaskIPC;
-      EVENT = evAlarmSPIMasterTransmit;
-    };
 }
 
 ISR EXTI0_Handler {

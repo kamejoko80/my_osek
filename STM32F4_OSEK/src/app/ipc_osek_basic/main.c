@@ -33,7 +33,7 @@ void PrintBuffer(uint8_t *RxBuffer, uint32_t Len)
 {
     int i;
 
-    for(i = 0; i < IPC_TRANSFER_LEN; i++)
+    for(i = 0; i < Len; i++)
     {
         printf("%c", RxBuffer[i]);
     }
@@ -68,7 +68,7 @@ void IPC_DataRxHandler(Fifo_t *Fifo)
 
     /* Fetch data from FIFO buffer */
     FifoPopMulti(Fifo, Buff, IPC_TRANSFER_LEN);
-    PrintBuffer(Frame->Data, IPC_TRANSFER_LEN);
+    PrintBuffer(Frame->Data, Frame->Header.Len);
 }
 
 /**
@@ -140,7 +140,6 @@ TASK(TaskDemo)
         get_string(str);
         printf("%s\r\n", str);
         IPC_Send((uint8_t *)str, strlen(str));
-
         STM_EVAL_LEDToggle(LED4);
     }
 

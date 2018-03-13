@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) : 2016
  *  File name     : spi.h
- *	Author        : Dang Minh Phuong
+ *  Author        : Dang Minh Phuong
  *  Email         : kamejoko80@yahoo.com
  *
  *  This program is free software, you can redistribute it and/or modify

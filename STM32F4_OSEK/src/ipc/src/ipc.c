@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) : 2018
  *  File name     : ipc.c
- *	Author        : Dang Minh Phuong
+ *  Author        : Dang Minh Phuong
  *  Email         : kamejoko80@yahoo.com
  *
  *  This program is free software, you can redistribute it and/or modify
@@ -51,7 +51,7 @@ static Fifo_t g_RxFifo;
 /*
  * IPC Initialization status
  */
- static bool g_IsIPCInit = false;
+static bool g_IsIPCInit = false;
 
 /***************************************************************
  *  EXTERNAL FUNCTION PROTOYPE
@@ -63,13 +63,18 @@ extern void IPC_Frame_Print(IPC_Frame_t *Frame);
 /***************************************************************
  *  FUNCTION PROTOYPE
  ***************************************************************/
-static void IPC_SPITransferQueue(void);
 static void IPC_ManageDataReceived(EventMaskType eventMask);
+void IPC_SPITransferQueue(void);
 void IPC_TransferCompleted(void);
 
 /***************************************************************
  *  FUNCTION DEFINITION
  ***************************************************************/
+
+/*!
+ * Function : IPC_Init
+ * Context  : Task
+ */
 void IPC_Init(void)
 {
     /* FIFO initialization */
@@ -80,30 +85,47 @@ void IPC_Init(void)
     SPI_Config(true);
 #else
     SPI_Config(false);
-    IPC_SPITransferQueue();
 #endif
 
     g_IsIPCInit = true;
 }
 
+/*!
+ * Function : IPC_InitStatus
+ * Context  : Task
+ */
 bool IPC_InitStatus(void)
 {
     return g_IsIPCInit;
+}
+
+static void IPC_GpioTransferRequestSignal(void)
+{
+    /* Generate transfer request signal on GPIO */
+    SPI_RequestOutSetValue(false);
+    SPI_RequestOutSetValue(true);
 }
 
 /*!
  * Function : SPI transfer request
  * Context  : Interrupt or TaskIPC
  */
-static void IPC_SPITransferQueue(void)
+void IPC_SPITransferQueue(void)
 {
-    /* Master transfer request */
+    /* Reset IPC transmit buffer */
+    memset(g_TxBuff, 0, IPC_TRANSFER_LEN + 1);
+
+    /* Fetch data from Tx FIFO buffer */
+    FifoPopMulti(&g_TxFifo, g_TxBuff, IPC_TRANSFER_LEN);
+
+    /* SPI transfer request */
     SPI_AsyncTransfer(g_TxBuff, g_RxBuff, IPC_TRANSFER_LEN + 1, &IPC_TransferCompleted);
 
 #ifndef SPI_MASTER
-    /* Signals that SPI slaver is free */
-    SPI_RequestOutSetValue(true);
+    /* Generate slaver transfer request signal */
+    IPC_GpioTransferRequestSignal();
 #endif
+
 }
 
 /*!
@@ -113,11 +135,6 @@ static void IPC_SPITransferQueue(void)
 void IPC_TransferCompleted(void)
 {
     IPC_Frame_t *Frame = (IPC_Frame_t *)g_RxBuff;
-
-#ifndef SPI_MASTER
-    /* Signals that SPI slaver is busy */
-    SPI_RequestOutSetValue(false);
-#endif
 
     if (IPC_Frame_Check(Frame))
     {
@@ -129,49 +146,11 @@ void IPC_TransferCompleted(void)
     }
 
 #ifndef SPI_MASTER
-    /* Reset IPC slaver transmit buffer */
-    memset(g_TxBuff, 0, IPC_TRANSFER_LEN + 1);
-
-    /* Fetch data from Tx FIFO buffer */
-    FifoPopMulti(&g_TxFifo, g_TxBuff, IPC_TRANSFER_LEN);
-
-    /* Slaver transfer request SPI DMA queue */
-    IPC_SPITransferQueue();
+        /* Notify slaver transfer complete */
+        SetEvent(TaskIPC, evIPCSlaverSendComplete);
 #endif
+
 }
-
-#ifdef SPI_MASTER
-/*!
- * Function : Manage periodic SPI master transfer request
- * Context  : TaskIPC
- */
-static void IPC_ManageSPIMasterTransmit(EventMaskType eventMask)
-{
-    /*
-     * No matter what Tx FIFO buffer empty or not
-     * master should request SPI DMA transfer to
-     * poll the received data from slaver
-     */
-    if (eventMask & evAlarmSPIMasterTransmit)
-    {
-        /* Check if SPI slaver is free */
-        if(SPI_RequestInGetStatus())
-        {
-            /* Reset IPC transmit buffer */
-            memset(g_TxBuff, 0, IPC_TRANSFER_LEN + 1);
-
-            /* Fetch data from Tx FIFO buffer */
-            FifoPopMulti(&g_TxFifo, g_TxBuff, IPC_TRANSFER_LEN);
-
-            /* Master transfer request SPI DMA queue */
-            IPC_SPITransferQueue();
-        }
-
-        /* Clear the event */
-        ClearEvent(evAlarmSPIMasterTransmit);
-    }
-}
-#endif
 
 /*!
  * Function : IPC data received handler
@@ -184,7 +163,7 @@ void __attribute__((weak)) IPC_DataRxHandler(Fifo_t *Fifo)
 }
 
 /*!
- * Function : Menage IPC data received event
+ * Function : Manage IPC data received event
  * Context  : TaskIPC
  */
 static void IPC_ManageDataReceived(EventMaskType eventMask)
@@ -202,6 +181,27 @@ static void IPC_ManageDataReceived(EventMaskType eventMask)
     }
 }
 
+#ifndef SPI_MASTER
+/*!
+ * Function : Manage slaver transfer complete
+ * Context  : TaskIPC
+ */
+static void IPC_ManageSlaverTransferComplete(EventMaskType eventMask)
+{
+    if (eventMask & evIPCSlaverSendComplete)
+    {
+        if(FifoGetDataSize(&g_TxFifo) >= IPC_TRANSFER_LEN)
+        {
+            /* Queue data transfer */
+            IPC_SPITransferQueue();
+        }
+
+        /* Clear the event */
+        ClearEvent(evIPCSlaverSendComplete);
+    }
+}
+#endif
+
 /*!
  * Function : IPC data transfer request
  * Context  : Any
@@ -210,6 +210,7 @@ void IPC_Send(uint8_t *Data, uint16_t Len)
 {
     IPC_Frame_t *Frame = (IPC_Frame_t *)g_TmpBuff;
 
+    /* Push data into the Tx FIFO buffer */
     if(FifoGetFreeSize(&g_TxFifo) >= IPC_TRANSFER_LEN)
     {
         if(IPC_Frame_Create(Frame, Data, Len))
@@ -217,6 +218,15 @@ void IPC_Send(uint8_t *Data, uint16_t Len)
             FifoPushMulti(&g_TxFifo, (uint8_t *)Frame, IPC_TRANSFER_LEN);
         }
     }
+
+#ifdef SPI_MASTER
+    /* Generate master transfer request signal */
+    IPC_GpioTransferRequestSignal();
+#else
+    /* Trigger data transfer request */
+    SetEvent(TaskIPC, evIPCSlaverSendComplete);
+#endif
+
 }
 
 /*!
@@ -234,19 +244,13 @@ TASK(TaskIPC)
     IPC_Init();
 
     /* Initialize wait events */
-    waitEventMask |= evAlarmSPIMasterTransmit |
-                     evIPCDataReceived;
-
-#ifdef SPI_MASTER
-    /* Start IPC master transfer periodic alarm */
-    SetRelAlarm(AlarmSPIMasterTransmit, 10, IPC_MASTER_TRANSMIT_INTERVAL);
-#endif
+    waitEventMask |= evIPCDataReceived | evIPCSlaverSendComplete;
 
     /* TaskIPC main loop */
 	while(1)
 	{
             /*
-             * Task will switched to WAIT state
+             * Task will switch to WAIT state
              * after calling the following function
              */
             WaitEvent(waitEventMask);
@@ -254,12 +258,12 @@ TASK(TaskIPC)
             /* Check event and do the corresponding process */
             if (E_OK == GetEvent(TaskIPC, &eventMask))
             {
-                    /* IPC transfer request complete */
-                    IPC_ManageDataReceived(eventMask);
+                /* IPC transfer request complete */
+                IPC_ManageDataReceived(eventMask);
 
-                #ifdef SPI_MASTER
-                    /* Master transfer SPI DMA queue */
-                    IPC_ManageSPIMasterTransmit(eventMask);
+                #ifndef SPI_MASTER
+                /* Manage IPC slaver transfer complete */
+                IPC_ManageSlaverTransferComplete(eventMask);
                 #endif
 
                 STM_EVAL_LEDToggle(LED5);
