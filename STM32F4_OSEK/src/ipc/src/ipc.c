@@ -20,7 +20,7 @@
 /***************************************************************
  *  MACRO DEFINITION
  ***************************************************************/
-#define IPC_MASTER_TRANSMIT_INTERVAL 10 /* ms */
+#define EXTI0_IRQ 6 /* EXT0 IRQ number */
 
 /***************************************************************
  *  GLOBAL VARIABLE DEFINITION
@@ -99,11 +99,33 @@ bool IPC_InitStatus(void)
     return g_IsIPCInit;
 }
 
+/*!
+ * Function : IPC_GpioTransferRequestSignal
+ * Context  : Task
+ */
 static void IPC_GpioTransferRequestSignal(void)
 {
     /* Generate transfer request signal on GPIO */
     SPI_RequestOutSetValue(false);
     SPI_RequestOutSetValue(true);
+}
+
+/*!
+ * Function : IPC_DisableIntRqstSignal
+ * Context  : Task
+ */
+static void IPC_DisableIntRqstSignal(void)
+{
+    NVIC_DisableIRQ(EXTI0_IRQ);
+}
+
+/*!
+ * Function : IPC_EnableIntRqstSignal
+ * Context  : Task
+ */
+static void IPC_EnableIntRqstSignal(void)
+{
+    NVIC_EnableIRQ(EXTI0_IRQ);
 }
 
 /*!
@@ -215,7 +237,14 @@ void IPC_Send(uint8_t *Data, uint16_t Len)
     {
         if(IPC_Frame_Create(Frame, Data, Len))
         {
+            /* Critical section enter */
+            IPC_DisableIntRqstSignal();
+
+            /* Push data into the Tx FIFO */
             FifoPushMulti(&g_TxFifo, (uint8_t *)Frame, IPC_TRANSFER_LEN);
+
+            /* Critical section exit */
+            IPC_EnableIntRqstSignal();
         }
     }
 
