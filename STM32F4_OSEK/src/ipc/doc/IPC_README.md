@@ -33,7 +33,7 @@ GPIO Signaling :
     Master (Output)        Slaver (Input)
          PA1     ------>        PA0
 
-====================================================================================================================================================================================================================
+=======
 
 ```
 
@@ -41,52 +41,59 @@ How does it work ?
 
 1> Slaver transfer request:
 
- Task(application)        TaskIPC(slaver)               IPC(slaver)                   SPI(slaver)   SPI(master)                 IPC(master)                  Ext IRQ       TaskIPC(master)         Task(application)
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |---------IPC_Send()--------------------------------->|                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |---FifoPushMulti()---|      |             |                           |                           |                 |                        |
-       |                        |                            |                     |      |             |                           |                           |                 |                        |
-       |                        |                            |<--------------------|      |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |<--evIPCSlaverSendComplete--|                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                     (*)|---IPC_SPITransferQueue()-->|                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |---FifoPopMulti()----|      |             |                           |                           |                 |                        |
-       |                        |                            |                     |      |             |                           |                           |                 |                        |
-       |                        |                            |<--------------------|      |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |----SPI_AsyncTransfer()---->|             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |--------------------------------IPC_GpioTransferRequestSignal()---------------------------------->|                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |   |--EXTI0_Handler()------|                 |                        |
-       |                        |                            |                            |             |                           |   |                       |                 |                        |
-       |                        |                            |                            |             |                           |   |---------------------->|                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |<--IPC_SPITransferQueue()--|(**)             |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |---FifoPopMulti()--|       |                 |                        |
-       |                        |                            |                            |             |                           |                   |       |                 |                        |
-       |                        |                            |                            |             |                           |<------------------|       |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |<----SPI_AsyncTransfer()---|                           |                 |                        |
-       |                        |                            |                            |     DMA     |                           |                           |                 |                        |
-       |                        |                            |                            |<----------->|                           |                           |                 |                        |
-       |                        |                            |                            |  Transfer   |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |<---DMA2_Stream2_Handler()--|             |--DMA2_Stream2_Handler()-->|                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |<-----evIPCDataReceived-----|                            |             |                           |-----evIPCDataReceived---------------------->|                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |<--IPC_DataRxHandler()--|                            |                            |             |                           |                           |                 |--IPC_DataRxHandler()-->|
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |<--evIPCSlaverSendComplete--|(*)                         |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
-       |                        |                            |                            |             |                           |                           |                 |                        |
+ Task(application)        TaskIPC(slaver)               IPC(slaver)                   SPI(slaver)   SPI(master)                 IPC(master)                  Ext IRQ        TaskIPC(master)         Task(application)
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |---------IPC_Send()--------------------------------->|                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |----FifoPushMulti(Tx)------------------------------->|                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |<--evIPCSlaverSendComplete--|                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |---IPC_ManageSlaverTransferComplete()---|                |             |                           |                            |                 |                        |
+       |                        |                                        |                |             |                           |                            |                 |                        |
+       |                        |<---------------------------------------|                |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                     (*)|---IPC_SPITransferQueue()-->|                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |-----FifoPopMulti(Tx)------>|                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |----SPI_AsyncTransfer()---->|             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |--------------------------------IPC_GpioTransferRequestSignal()----------------------------------->|                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |   |--EXTI0_Handler()-------|                 |                        |
+       |                        |                            |                            |             |                           |   |                        |                 |                        |
+       |                        |                            |                            |             |                           |   |----------------------->|                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |<--IPC_SPITransferQueue()---|(**)             |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |<------FifoPopMulti()-------|                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |<----SPI_AsyncTransfer()---|                            |                 |                        |
+       |                        |                            |                            |     DMA     |                           |                            |                 |                        |
+       |                        |                            |                            |<----------->|                           |                            |                 |                        |
+       |                        |                            |                            |  Transfer   |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            | |--DMA2_Stream2_Handler()--|             |--DMA2_Stream2_Handler()-| |                            |                 |                        |
+       |                        |                            | |                          |             |                         | |                            |                 |                        |
+       |                        |                            | |------------------------->|             |<------------------------| |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |<--IPC_TransferCompleted()--|             |--IPC_TransferCompleted()->|                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |<-----FifoPushMulti(Rx)-----|             |----FifoPushMulti(Rx)----->|                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |<-----evIPCDataReceived-----|                            |             |                           |-----evIPCDataReceived----------------------->|                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |-IPC_ManageDataReceived()-| |                            |             |                           |-IPC_ManageDataReceived()-| |                 |                        |
+       |                        |                          | |                            |             |                           |                          | |                 |                        |
+       |                        |<-------------------------| |                            |             |                           |<-------------------------| |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |<--IPC_DataRxHandler()--|                            |                            |             |                           |                            |                 |--IPC_DataRxHandler()-->|
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |<--evIPCSlaverSendComplete--|(*)                         |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
+       |                        |                            |                            |             |                           |                            |                 |                        |
 
 Note:
 
@@ -95,54 +102,56 @@ Note:
 
 2> Master transfer request:
 
- Task(application)        TaskIPC(slaver)    Ext IRQ                  IPC(slaver)                   SPI(slaver)   SPI(master)                 IPC(master)              Master Ext IRQ    TaskIPC(master)         Task(application)
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |<-----------------------------------------------------IPC_Send()------|
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |---FifoPushMulti()---|     |                 |                        |
-       |                        |               |                           |                            |             |                           |                     |     |                 |                        |
-       |                        |               |                           |                            |             |                           |<--------------------|     |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |<-----------------------------IPC_GpioTransferRequestSignal()-------------------------------------|                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |---EXTI0_Handler()---|     |                            |             |                           |                           |                 |                        |
-       |                        |               |                     |     |                            |             |                           |                           |                 |                        |
-       |                        |               |<--------------------|     |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |--IPC_SPITransferQueue()-->|                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |---FifoPopMulti()----|      |             |                           |                           |                 |                        |
-       |                        |               |                           |                     |      |             |                           |                           |                 |                        |
-       |                        |               |                           |<--------------------|      |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |---SPI_AsyncTransfer()----->|             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |---IPC_GpioTransferRequestSignal()--------------------------------------------------------------->|                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |   |--EXTI0_Handler()------|                 |                        |
-       |                        |               |                           |                            |             |                           |   |                       |                 |                        |
-       |                        |               |                           |                            |             |                           |   |---------------------->|                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |<--IPC_SPITransferQueue()--|                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |---FifoPopMulti()--|       |                 |                        |
-       |                        |               |                           |                            |             |                           |                   |       |                 |                        |
-       |                        |               |                           |                            |             |                           |<------------------|       |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |<----SPI_AsyncTransfer()---|                           |                 |                        |
-       |                        |               |                           |                            |     DMA     |                           |                           |                 |                        |
-       |                        |               |                           |                            |<----------->|                           |                           |                 |                        |
-       |                        |               |                           |                            |  Transfer   |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |<---DMA2_Stream2_Handler()--|             |--DMA2_Stream2_Handler()-->|                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |<--------evIPCDataReceived-----------------|                            |             |                           |-----evIPCDataReceived---------------------->|                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |<--IPC_DataRxHandler()--|               |                           |                            |             |                           |                           |                 |--IPC_DataRxHandler()-->|
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |<-------evIPCSlaverSendComplete------------|                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-       |                        |               |                           |                            |             |                           |                           |                 |                        |
-
+ Task(application)        TaskIPC(slaver)    Ext IRQ                  IPC(slaver)                   SPI(slaver)   SPI(master)                 IPC(master)                Master Ext IRQ    TaskIPC(master)         Task(application)
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |<------------------------------------------------------IPC_Send()------|
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |<--------------------------------------------------FifoPushMulti(Tx)---|
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |<-----------------------------IPC_GpioTransferRequestSignal()-------------------------------------|                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |---EXTI0_Handler()---|     |                            |             |                           |                            |                 |                        |
+       |                        |               |                     |     |                            |             |                           |                            |                 |                        |
+       |                        |               |<--------------------|     |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |--IPC_SPITransferQueue()-->|                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |-----FifoPopMulti(Tx)----->|                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |---SPI_AsyncTransfer()----->|             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |---IPC_GpioTransferRequestSignal()---------------------------------------------------------------->|                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |   |--EXTI0_Handler()-------|                 |                        |
+       |                        |               |                           |                            |             |                           |   |                        |                 |                        |
+       |                        |               |                           |                            |             |                           |   |----------------------->|                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |<--IPC_SPITransferQueue()---|                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |<--FifoPopMulti(Tx)---------|                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |<----SPI_AsyncTransfer()---|                            |                 |                        |
+       |                        |               |                           |                            |     DMA     |                           |                            |                 |                        |
+       |                        |               |                           |                            |<----------->|                           |                            |                 |                        |
+       |                        |               |                           |                            |  Transfer   |                           |                            |                 |                        |
+       |                        |               |                           | |--DMA2_Stream2_Handler()--|             |--DMA2_Stream2_Handler()-| |                            |                 |                        |
+       |                        |               |                           | |                          |             |                         | |                            |                 |                        |
+       |                        |               |                           | |------------------------->|             |<------------------------| |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |<--IPC_TransferCompleted()--|             |--IPC_TransferCompleted()->|                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |<-----FifoPushMulti(Rx)-----|             |----FifoPushMulti(Rx)----->|                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |<--------------------evIPCDataReceived-----|                            |             |                           |-----evIPCDataReceived----------------------->|                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |---IPC_ManageDataReceived()--|             |                            |             |                           |-IPC_ManageDataReceived()-| |                 |                        |
+       |                        |               |             |             |                            |             |                           |                          | |                 |                        |
+       |                        |<----------------------------|             |                            |             |                           |<-------------------------| |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |<--IPC_DataRxHandler()--|               |                           |                            |             |                           |                            |                 |--IPC_DataRxHandler()-->|
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |<-----------------evIPCSlaverSendComplete--|(*)                         |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
+       |                        |               |                           |                            |             |                           |                            |                 |                        |
 ```
