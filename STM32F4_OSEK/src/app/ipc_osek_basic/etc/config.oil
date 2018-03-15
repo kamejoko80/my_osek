@@ -17,6 +17,12 @@ APPMODE = AppMode1;
 EVENT = evIPCDataReceived;
 EVENT = evIPCSlaverSendComplete;
 
+/* System trace usage events */
+EVENT = evSysTraceMsgQueue;
+
+/* Input USART received complete */
+EVENT = evInputRcvComplete;
+
 /* IPC usage task */
 TASK TaskIPC {
     PRIORITY = 7;
@@ -41,6 +47,7 @@ TASK TaskDemo {
     STACK = 512;
     TYPE = EXTENDED;
     SCHEDULE = FULL;
+    EVENT = evInputRcvComplete;
 }
 
 TASK TaskIdle {
@@ -52,21 +59,40 @@ TASK TaskIdle {
     STACK = 512;
     TYPE = EXTENDED;
     SCHEDULE = FULL;
+    EVENT = evSysTraceMsgQueue;
 }
 
+/* IPC transfer request IRQ */
 ISR EXTI0_Handler {
     CATEGORY  = 2;
     PRIORITY  = 1;
 	INTERRUPT = EXTI0;
-    STACKSIZE = 512;
+    STACKSIZE = 256;
 };
 
+/* IPC SPI DMA transfer complete IRQ */
 ISR DMA2_Stream2_Handler {
     CATEGORY  = 2;
     PRIORITY  = 1;
 	INTERRUPT = DMA2_Stream2;
-    STACKSIZE = 512;
+    STACKSIZE = 256;
 };
+
+/* UART2 input IRQ */
+ISR USART2_Handler {
+    CATEGORY  = 2;
+    PRIORITY  = 7;
+	INTERRUPT = USART2;
+    STACKSIZE = 256;
+};
+
+/* System trace usage callback alarm */
+ALARM SysTickCallbackAlarm {
+    COUNTER = HardwareCounter;
+    ACTION = ALARMCALLBACK {
+        ALARMCALLBACKNAME = "SysTickCallback";
+    }
+}
 
 COUNTER HardwareCounter {
    MAXALLOWEDVALUE = 60000000;

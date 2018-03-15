@@ -16,6 +16,7 @@
 #include "stm32f4_discovery.h"
 #include "ipc.h"
 #include "os.h"
+#include "trace.h"
 
 /***************************************************************
  *  MACRO DEFINITION

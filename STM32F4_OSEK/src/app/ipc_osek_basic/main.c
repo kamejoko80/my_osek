@@ -12,12 +12,15 @@
 
 **********************************************************************/
 #include <stdio.h>
+#include <stdlib.h>
 #include "stm32f4_discovery.h"
 #include "stm32f4xx_conf.h"
 #include "os.h"
 #include "uart_debug.h"
 #include "ipc.h"
 #include "fifo.h"
+#include "trace.h"
+#include "input.h"
 
 char str[IPC_TRANSFER_LEN] = {0};
 uint8_t Buff[IPC_TRANSFER_LEN] = {0};
@@ -62,13 +65,35 @@ void get_string(char *str)
    }
 }
 
+/**
+ * @brief         Input_GetsCallBack
+ * @param[in]     char *Buffer, uint32_t Len
+ * @param[in,out] None
+ * @return        void
+ */
+void Input_GetsCallBack(char *Buffer, uint32_t Len)
+{
+	/* Send event to TaskMenu */
+	SetEvent(TaskDemo, evInputRcvComplete);
+}
+
+/**
+ * @brief         IPC_DataRxHandler
+ * @param[in]     Fifo_t *Fifo
+ * @param[in,out] None
+ * @return        void
+ */
 void IPC_DataRxHandler(Fifo_t *Fifo)
 {
     IPC_Frame_t *Frame = (IPC_Frame_t *)Buff;
 
     /* Fetch data from FIFO buffer */
     FifoPopMulti(Fifo, Buff, IPC_TRANSFER_LEN);
-    PrintBuffer(Frame->Data, Frame->Header.Len);
+
+    /* Reset message data buffer */
+    memset(str, 0, IPC_TRANSFER_LEN);
+    memcpy(str, Frame->Data, Frame->Header.Len);
+    SysTrace_Message("%s", str);
 }
 
 /**
@@ -104,10 +129,32 @@ int main(void)
  */
 TASK(TaskIdle)
 {
+    EventMaskType waitEventMask = 0;
+    EventMaskType eventMask;
+
     printf("TaskIdle: Init\n");
+
+    /* Initialize wait events */
+    waitEventMask |= evSysTraceMsgQueue;
+
     while(1)
     {
+        /*
+         * Task will switch to WAIT state
+         * after calling the following function
+         */
+        WaitEvent(waitEventMask);
 
+        /* Check event and do the corresponding process */
+        if (E_OK == GetEvent(TaskIdle, &eventMask))
+        {
+            SysTrace_ManageMsgQueueEvent(eventMask);
+        }
+        else
+        {
+            /* This should not be run */
+            TerminateTask();
+        }
     }
 
 	TerminateTask();
@@ -121,7 +168,12 @@ TASK(TaskIdle)
  */
 TASK(TaskDemo)
 {
+    EventMaskType Event;
+
     printf("TaskDemo: Init\n");
+
+    /* Init system trace module */
+    SysTrace_Init();
 
     /* Wait for IPC initialization completed */
     while (false == IPC_InitStatus());
@@ -136,9 +188,18 @@ TASK(TaskDemo)
 
     while(1)
     {
+        /* Reset message buffer */
         memset(str, 0, IPC_TRANSFER_LEN);
-        get_string(str);
-        printf("%s\r\n", str);
+
+        /* Get message input */
+        Input_GetsAsync(str, IPC_TRANSFER_LEN, &Input_GetsCallBack);
+
+        /* Wait event */
+        WaitEvent(evInputRcvComplete);
+        GetEvent(TaskDemo, &Event);
+        ClearEvent(evInputRcvComplete);
+
+        SysTrace_Message("%s", str);
         IPC_Send((uint8_t *)str, strlen(str));
         STM_EVAL_LEDToggle(LED4);
     }

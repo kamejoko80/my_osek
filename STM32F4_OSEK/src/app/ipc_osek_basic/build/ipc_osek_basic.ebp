@@ -288,9 +288,17 @@
 		<Unit filename="..\..\..\os\osek\src\WaitEvent.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\services\inc\input.h" />
 		<Unit filename="..\..\..\services\inc\list_head.h" />
 		<Unit filename="..\..\..\services\inc\message.h" />
+		<Unit filename="..\..\..\services\inc\trace.h" />
+		<Unit filename="..\..\..\services\src\input.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\services\src\message.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\services\src\trace.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
@@ -332,6 +340,15 @@
 				</target_debugging_settings>
 			</debugger>
 			<envvars />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </EmBitz_project_file>
