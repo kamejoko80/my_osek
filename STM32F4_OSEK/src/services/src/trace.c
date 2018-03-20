@@ -71,7 +71,7 @@ void SysTrace_Init(void)
     FifoInit(&g_SysTraceFifo, g_SysTraceBuff, SYS_TRACE_BUF_SIZE);
 
     /* Set 1ms system tick callback alarm */
-	SetRelAlarm(SysTickCallbackAlarm, 0, 1);
+    SetRelAlarm(SysTickCallbackAlarm, 0, 1);
 }
 
 uint32_t SysTrace_GetTime(char *TimeStr)
@@ -205,6 +205,11 @@ void SysTrace_PrintOut(void)
         FifoPopMulti(&g_SysTraceFifo, (uint8_t *)g_SysTraceTempBuff, SYS_TRACE_MAX_MSG_LEN);
         printf("%s\r\n", g_SysTraceTempBuff);
     }
+    else
+    {
+        /* Clear the event if there is no saved buffer data */
+        ClearEvent(evSysTraceMsgQueue);
+    }
 }
 
 /*!
@@ -217,9 +222,6 @@ void SysTrace_ManageMsgQueueEvent(EventMaskType eventMask)
     {
         /* Print out the message trace */
         SysTrace_PrintOut();
-
-        /* Clear the event */
-        ClearEvent(evSysTraceMsgQueue);
     }
 }
 
