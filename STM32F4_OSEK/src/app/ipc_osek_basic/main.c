@@ -17,10 +17,13 @@
 #include "stm32f4xx_conf.h"
 #include "os.h"
 #include "uart_debug.h"
+#include "backtrace.h"
 #include "ipc.h"
 #include "fifo.h"
 #include "trace.h"
 #include "input.h"
+
+#define BACKTRACE_SIZE 4
 
 char str[IPC_TRANSFER_LEN] = {0};
 uint8_t Buff[IPC_TRANSFER_LEN] = {0};
@@ -209,8 +212,29 @@ TASK(TaskDemo)
 
 void ErrorHook(void)
 {
+    uint8_t i;
+    backtrace_t backtrace[BACKTRACE_SIZE];
+
+    /* Get back trace info */
+    backtrace_unwind(backtrace, BACKTRACE_SIZE);
+
 	/* kernel panic :( */
     printf("kernel panic\n");
+    printf("call stack :\n");
+
+    for (i = 0; i < BACKTRACE_SIZE; i++)
+    {
+        if(strcmp("unknown", backtrace[i].name) == 0)
+        {
+            break;
+        }
+
+        printf("name       : %s\r\n", backtrace[i].name);
+        printf("function   : %p\r\n", backtrace[i].function);
+        printf("address    : %p\r\n", backtrace[i].address);
+        printf("==============\n\r");
+    }
+
 	ShutdownOS(0);
 }
 

@@ -25,6 +25,9 @@
 					<Add option="-ffunction-sections" />
 					<Add option="-O0" />
 					<Add option="-g3" />
+					<Add option="-mpoke-function-name" />
+					<Add option="-funwind-tables" />
+					<Add option="-fno-omit-frame-pointer" />
 					<Add directory="..\..\..\bsp\STM32F4\inc" />
 					<Add directory="..\..\..\bsp\STM32F4\cmsis" />
 					<Add directory="..\..\..\bsp\STM32F4\spl\inc" />
@@ -288,10 +291,14 @@
 		<Unit filename="..\..\..\os\osek\src\WaitEvent.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\..\..\services\inc\backtrace.h" />
 		<Unit filename="..\..\..\services\inc\input.h" />
 		<Unit filename="..\..\..\services\inc\list_head.h" />
 		<Unit filename="..\..\..\services\inc\message.h" />
 		<Unit filename="..\..\..\services\inc\trace.h" />
+		<Unit filename="..\..\..\services\src\backtrace.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\..\..\services\src\input.c">
 			<Option compilerVar="CC" />
 		</Unit>
