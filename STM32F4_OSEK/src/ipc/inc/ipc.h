@@ -20,7 +20,7 @@
 #include "fifo.h"
 #include "frame.h"
 
-#define SPI_MASTER
+//#define SPI_MASTER
 
 /**
  * @brief         IPC_Init
